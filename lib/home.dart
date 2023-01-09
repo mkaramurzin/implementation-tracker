@@ -16,68 +16,99 @@ class _HomeState extends State<Home> {
 
   int steps = 10;
   late Widget implement;
+  List<String> trackerList = [];
+
+  final _textController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  void menuOption(int option) {
+    switch(option) {
+      case 0:
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Add Tracker"),
+              content: Container(
+                height: 150,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _textController,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          labelText: 'Tracker Name'
+                        ),
+                        validator: (text) {
+                          if(_textController.text.isEmpty) {
+                            return "Please name the tracker";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        child: Text("Add"),
+                        onPressed: () {
+                          if(_formKey.currentState!.validate()) {
+                            setState(() {
+                              trackerList.add(_textController.text);
+                            });
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              )
+            );
+          }
+        );
+        break;
+
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     implement = ImplementationSteps(totalSteps: steps);
+    trackerList.add("tracker 1");
+    trackerList.add("tracker 2");
   }
-
-  Widget w1 = StepsIndicator(
-    selectedStep: 15,
-    nbSteps: 16,
-    lineLength: 50,
-    doneLineThickness: 2,
-    undoneLineThickness: 2,
-    selectedStepSize: 25,
-    unselectedStepSize: 25,
-    doneStepSize: 25,
-  );
-
-  Widget w2 = StepProgressIndicator(
-    totalSteps: 16,
-    currentStep: 15,
-    size: 36,
-    selectedColor: Colors.black,
-    unselectedColor: Colors.grey,
-    customStep: (index, color, _) => color == Colors.black
-        ? Container(
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color
-        )
-    )
-        : Container(
-      decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color
-      ),
-    ),
-  );
-
-  Widget w3 = StepsIndicator(
-    isHorizontal: false,
-    selectedStep: 15,
-    nbSteps: 16,
-    lineLength: 50,
-    doneLineThickness: 2,
-    undoneLineThickness: 2,
-    selectedStepSize: 25,
-    unselectedStepSize: 25,
-    doneStepSize: 25,
-    // doneStepWidget: Container(
-    //   height: 20,
-    //   width: 20,
-    //   decoration: BoxDecoration(
-    //     shape: BoxShape.rectangle,
-    //     color: Colors.red
-    //   ),
-    // ),
-  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Implementation Tracker"),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<int>(
+            onSelected: (item) {
+              menuOption(item);
+            },
+            position: PopupMenuPosition.under,
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 0,
+                child: Text("Add Tracker"),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Text("Edit Steps"),
+              ),
+              PopupMenuDivider(),
+              PopupMenuItem(
+                value: 2,
+                child: Text("Sign Out"),
+              ),
+            ],
+          )
+        ],
+      ),
       body: ListView(
         children: [
           Padding(
@@ -85,10 +116,18 @@ class _HomeState extends State<Home> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Tracker(name: 'Tracker 1', maxSteps: steps),
-                SizedBox(width: 50),
-                Tracker(name: 'Tracker 2', maxSteps: steps),
-                SizedBox(width: 50),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: List.from(trackerList.reversed).map((e) => Tracker(
+                    name: e,
+                    maxSteps: steps,
+                    delete: () {
+                      setState(() {
+                        trackerList.remove(e);
+                      });
+                    },
+                  )).toList()
+                ),
                 Column(
                   children: [
                     SizedBox(height: 23),

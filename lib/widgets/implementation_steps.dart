@@ -17,14 +17,17 @@ class ImplementationSteps extends StatelessWidget {
       selectedStepSize: 25,
       unselectedStepSize: 25,
       doneStepSize: 25,
-      // doneStepWidget: Container(
-      //   height: 20,
-      //   width: 20,
-      //   decoration: BoxDecoration(
-      //     shape: BoxShape.rectangle,
-      //     color: Colors.red
-      //   ),
-      // ),
+      doneStepWidget: Tooltip(
+        message: 'Tooltip',
+        child: Container(
+          height: 25,
+          width: 25,
+          decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.red
+          ),
+        ),
+      )
     );
   }
 }
