@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:steps_indicator/steps_indicator.dart';
 
 class ImplementationSteps extends StatelessWidget {
-  int totalSteps;
+  double totalSteps;
   ImplementationSteps({super.key, this.totalSteps = 2});
 
   @override
@@ -10,7 +10,7 @@ class ImplementationSteps extends StatelessWidget {
     return StepsIndicator(
       isHorizontal: false,
       selectedStep: 15,
-      nbSteps: totalSteps,
+      nbSteps: totalSteps as int,
       lineLength: 50,
       doneLineThickness: 2,
       undoneLineThickness: 2,
