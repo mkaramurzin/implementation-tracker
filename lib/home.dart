@@ -5,8 +5,8 @@ import 'package:steps_indicator/steps_indicator.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/widgets/implementation_steps.dart';
-import 'package:tracker/tracker_values.dart';
 import 'package:tracker/widgets/custom_slider_thumb_circle.dart';
+import 'package:tracker/widgets/tracker_card.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,7 +19,8 @@ class _HomeState extends State<Home> {
 
   double steps = 10;
   late Widget implement;
-  List<TrackerValues> trackerList = [];
+  List<List<Tracker>> trackerMatrix =
+  List.generate(10, (_) => List.generate(10, (_) => Tracker(name: "")));
 
   final _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -47,7 +48,7 @@ class _HomeState extends State<Home> {
                         validator: (text) {
                           if(_textController.text.isEmpty) {
                             return "Please name the tracker";
-                          } else if(trackerList.where((tracker) => tracker.name == _textController.text).isNotEmpty) {
+                          } else if(trackerMatrix.any((sublist) => sublist.where((tracker) => tracker.name == _textController.text).isNotEmpty)) {
                             return "Tracker with that name already exists";
                           }
                           return null;
@@ -59,7 +60,7 @@ class _HomeState extends State<Home> {
                         onPressed: () {
                           if(_formKey.currentState!.validate()) {
                             setState(() {
-                              trackerList.add(TrackerValues(name: _textController.text));
+                              trackerMatrix[0].add(Tracker(name: _textController.text));
                               _textController.text = "";
                             });
                           }
@@ -81,8 +82,10 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     implement = ImplementationSteps(totalSteps: steps);
-    trackerList.add(TrackerValues(name: "T1"));
-    trackerList.add(TrackerValues(name: "T2"));
+    Tracker t1 = Tracker(name: "T1", currentStep: 0);
+    Tracker t2 = Tracker(name: "T2", currentStep: 3);
+    trackerMatrix[t1.currentStep.toInt()][0] = t1;
+    trackerMatrix[t2.currentStep.toInt()][1] = t2;
   }
 
   @override
@@ -121,53 +124,16 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.all(50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: List.from(trackerList.reversed).map((tracker) => Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 50, 25),
-                    child: Column(
-                      children: [
-                        tracker.deleteButton,
-                        Container(
-                            height: steps * 73,
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                thumbShape: CustomSliderThumbCircle(thumbRadius: 20, name: tracker.name),
-                                thumbColor: Colors.blue,
-                              ),
-                              child: RotatedBox(
-                                quarterTurns: 3,
-                                child: Slider(
-                                  value: tracker.currentStep,
-                                  min: 1,
-                                  max: steps,
-                                  divisions: (steps as int)-1,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      tracker.currentStep = (value).round() as double;
-                                      if(tracker.currentStep == steps) {
-                                        tracker.deleteButton = ElevatedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              trackerList.remove(tracker);
-                                            });
-                                          },
-                                          child: Icon(Icons.delete),
-                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                        );
-                                      } else {
-                                        tracker.deleteButton = SizedBox(height: 28, width: 56);
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                            )
-                        ),
-                      ],
-                    ),
-                  )).toList()
+                Column(
+                  children: trackerMatrix.reversed.map((sublist) => Row(
+                    children: sublist.reversed.map((tracker) => TrackerCard(
+                      name: tracker.name,
+                      currentStep: tracker.currentStep,
+                    )).toList()
+                  )
+                  ).toList()
                 ),
                 Column(
                   children: [
