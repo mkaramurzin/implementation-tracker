@@ -150,7 +150,7 @@ class _HomeState extends State<Home> {
               }
           );
         } else {
-          trackerMatrix[i][j].widget = Container();
+          trackerMatrix[i][j].widget = Container(width: 70, height: 1);
         }
       }
     }
@@ -162,7 +162,7 @@ class _HomeState extends State<Home> {
     trackerMatrix =
     List.generate(steps.toInt(), (_) => List.generate(10, (_) => Tracker(name: "", widget: Container())));
     descriptions =
-    List.generate(steps.toInt(), (index) => "$index");
+    List.generate(steps.toInt(), (index) => "Step $index");
     implement = ImplementationSteps(totalSteps: steps, descriptions: descriptions,);
     Tracker t1 = Tracker(name: "T1", currentStep: 0, widget: Container());
     Tracker t2 = Tracker(name: "T2", currentStep: 0, widget: Container());
@@ -202,34 +202,40 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: Container(
-        margin: EdgeInsets.fromLTRB(200, 50, 50, 50),
+        margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
         height: 2000,
-        child: ListView(
-          children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0,0,0,0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: trackerMatrix.reversed.map((sublist) => Row(
-                        children: sublist.reversed.map((tracker) => tracker.widget).toList()
+        width: double.infinity,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(0,0,0,0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: trackerMatrix.reversed.map((sublist) => Row(
+                                children: sublist.reversed.map((tracker) => tracker.widget).toList()
+                            )
+                            ).toList()
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(10, 50, 0, 10),
+                        child: implement,
                       )
-                      ).toList()
-                    ),
+                    ],
                   ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(10, 50, 0, 10),
-                    child: implement,
-                  )
-                ],
+                ),
               ),
-            )
-          ],
-        ),
+            ],
+          ),
+        )
       ),
     );
   }

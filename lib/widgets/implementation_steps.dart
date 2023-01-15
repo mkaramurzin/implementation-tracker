@@ -16,20 +16,11 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
 
   late Map<int, String> descList;
 
-  void retrieveDescription() {
-    if(selectedIndex == -1) {
-      description = "";
-    } else {
-      description = widget.descriptions[selectedIndex];
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     descList =
         Map.fromEntries(widget.descriptions.asMap().entries.toList().reversed);
-    retrieveDescription();
   }
 
   @override
@@ -47,26 +38,38 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
               tap: () {
                 setState(() {
                   if(entry.key == selectedIndex) {
+                    description = "";
                     selectedIndex = -1;
                   } else {
                     selectedIndex = entry.key;
+                    description = widget.descriptions[entry.key];
                   }
-                  retrieveDescription();
                 });
               },
             )).toList()
           ),
         ),
-        Visibility(
-          visible: true,
-          child: AnimatedContainer(
-            margin: EdgeInsets.fromLTRB(50, 0, 0, 0),
-            height: description == "" ? 0 : 100,
-            width: description == "" ? 0 : 100,
-            duration: Duration(milliseconds: 250),
-            color: Colors.blue,
-            child: Center(child: Text(description)),
+        AnimatedContainer(
+          margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+          height: 200,
+          width: 300,
+          decoration: BoxDecoration(
+            color: description == "" ? Colors.grey[50] : Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+              boxShadow: description == "" ?
+                  []
+              :
+              [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ]
           ),
+          duration: Duration(milliseconds: 250),
+          child: Center(child: Text(description)),
         )
       ],
     );
