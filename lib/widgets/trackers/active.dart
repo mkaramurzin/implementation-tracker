@@ -16,7 +16,7 @@ class Active extends StatelessWidget {
         Container(
           margin: EdgeInsets.fromLTRB(7, 5, 10, (tracker.currentStep == maxStep ? 17 : tracker.currentStep*1.6)),
           child: Draggable<Tracker>(
-            data: Tracker(name: tracker.name, widget: Container()),
+            data: tracker,
             feedback: CircleAvatar(
               backgroundColor: Colors.red,
               radius: 25,

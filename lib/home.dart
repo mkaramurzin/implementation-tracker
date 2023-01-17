@@ -23,6 +23,7 @@ class _HomeState extends State<Home> {
   late Widget implement;
   late List<List<Tracker>> trackerMatrix;
   List<String> descriptions = [];
+  int rowMax = 11;
 
   final _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -52,9 +53,10 @@ class _HomeState extends State<Home> {
                             return "Please name the tracker";
                           } else if(trackerMatrix.any((sublist) => sublist.where((tracker) => tracker.name == _textController.text).isNotEmpty)) {
                             return "Tracker with that name already exists";
-                          } else if(trackerMatrix[0].every((t) => t.name != "")) {
-                            return "The bottom row cannot hold anymore trackers";
                           }
+                          // else if(trackerMatrix[0].where((element) => element.fill == false).length == rowMax) {
+                          //   return "The bottom row cannot hold anymore trackers";
+                          // }
                           return null;
                         },
                       ),
@@ -66,10 +68,10 @@ class _HomeState extends State<Home> {
                             setState(() {
                               for(int i = 0; i < trackerMatrix[0].length; i++) {
                                 if(trackerMatrix[0][i].name == "") {
-                                  trackerMatrix[0][i] = Tracker(
+                                  trackerMatrix[0].add(Tracker(
                                     name: _textController.text,
                                     widget: Container()
-                                  );
+                                  ));
                                   break;
                                 }
                               }
@@ -94,7 +96,6 @@ class _HomeState extends State<Home> {
 
   void updateMatrix() {
     for(int i = 0; i < trackerMatrix.length; i++) {
-      bool firstEmpty = true;
       trackerMatrix[i].sort((a, b) {
         if (a.name.isEmpty && !b.name.isEmpty) {
           return 1;
@@ -107,67 +108,69 @@ class _HomeState extends State<Home> {
       for(int j = 0; j < trackerMatrix[i].length; j++) {
         if(trackerMatrix[i][j].name != "") {
           trackerMatrix[i][j].currentStep = i.toDouble();
-          trackerMatrix[i][j].widget = trackerMatrix[i][j].currentStep != steps-1?
-              Active(
-                tracker: trackerMatrix[i][j],
-                deleteButton: Container(),
-                maxStep: steps-1,
-              )
-          :
-              Active(
-                tracker: trackerMatrix[i][j],
-                maxStep: steps-1,
-                deleteButton: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      trackerMatrix[i][j].name = "";
-                      updateMatrix();
-                    });
-                  },
-                )
-              );
-        } else if(firstEmpty){
-          firstEmpty = false;
-          trackerMatrix[i][j].widget = Default(
-              onAccept: (data) {
-                setState(() {
-                  trackerMatrix.forEach((subList) {
-                    subList.forEach((e) {
-                      if(e.name == data.name) {
-                        e.name = "";
-                        updateMatrix();
-                      }
-                    });
+          trackerMatrix[i][j].widget =
+          trackerMatrix[i][j].currentStep != steps - 1 ?
+          Active(
+            tracker: trackerMatrix[i][j],
+            deleteButton: Container(),
+            maxStep: steps - 1,
+          )
+              :
+          Active(
+              tracker: trackerMatrix[i][j],
+              maxStep: steps - 1,
+              deleteButton: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: Icon(Icons.delete),
+                onPressed: () {
+                  setState(() {
+                    trackerMatrix[steps.toInt()-1].remove(trackerMatrix[i][j]);
                   });
-                });
-                trackerMatrix[i][j].name = data.name;
-                updateMatrix();
-              },
-              onWillAccept: (data) {
-                return true;
-              }
+                },
+              )
           );
-        } else {
-          trackerMatrix[i][j].widget = Container(width: 70, height: 1);
         }
       }
     }
+    fillRows();
+  }
+
+  void fillRows() {
+    trackerMatrix.forEach((sublist) {
+      sublist.removeWhere((element) => element.fill);
+    });
+    trackerMatrix.forEach((sublist) {
+      while(sublist.length < rowMax) {
+        sublist.add(Tracker(fill: true, name: "", widget: Container(width: 67, height: 1, color: Colors.green)));
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
     trackerMatrix =
-    List.generate(steps.toInt(), (_) => List.generate(10, (_) => Tracker(name: "", widget: Container())));
+    List.generate(steps.toInt(), (i) => List.generate(1, (j) => Tracker(name: "", widget: Default(
+        onAccept: (data) {
+          setState(() {
+            trackerMatrix.forEach((subList) {
+              subList.removeWhere((e) => e.name == data.name);
+            });
+          });
+          trackerMatrix[i].add(data);
+          updateMatrix();
+        },
+        onWillAccept: (data) {
+          return true;
+        }
+    ))));
     descriptions =
     List.generate(steps.toInt(), (index) => "Step $index");
     implement = ImplementationSteps(totalSteps: steps, descriptions: descriptions,);
     Tracker t1 = Tracker(name: "T1", currentStep: 0, widget: Container());
     Tracker t2 = Tracker(name: "T2", currentStep: 0, widget: Container());
-    trackerMatrix[t1.currentStep.toInt()][0] = t1;
-    trackerMatrix[t2.currentStep.toInt()][1] = t2;
+    trackerMatrix[t1.currentStep.toInt()].add(t1);
+    trackerMatrix[t2.currentStep.toInt()].add(t2);
     updateMatrix();
   }
 

@@ -12,14 +12,9 @@ class Default extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: DragTarget<Tracker>(
         builder: (context, accepted, rejected) {
-          return CircleAvatar(
-            backgroundColor: Colors.grey[200],
-            radius: 37,
-            child: CircleAvatar(
-              backgroundColor: Colors.grey[50],
-              radius: 30,
-              child: Text(""),
-            ),
+          return Container(
+            height: 74,
+            width: 72,
           );
         },
         onWillAccept: (data) {
