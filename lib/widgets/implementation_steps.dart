@@ -35,7 +35,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
 
   @override
   Widget build(BuildContext context) {
-
+    double multiplier = widget.descriptions.length < 6 ? 72 : 73;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -66,9 +66,12 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
         :
         Container(),
         Row(
+          crossAxisAlignment: widget.descriptions.length > 3 ?
+          CrossAxisAlignment.center : CrossAxisAlignment.end,
           children: [
             Container(
-              height: widget.totalSteps * (widget.editing ? 85 : 72),
+              color: Colors.yellow[100],
+              height: widget.totalSteps * (widget.editing ? 85 : multiplier),
               width: widget.editing ? 150 : 50,
               child: Column(
                 children: descList.entries.map((entry) => Segment(
@@ -186,17 +189,42 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
               ),
               duration: Duration(milliseconds: 250),
               child: !widget.editing ?
-                Center(child: Text(description))
+                ListView(
+                  children: [
+                    Text(description)
+                  ],
+                )
                   :
-                TextFormField(
-                  controller: _controller,
-                  maxLines: 10,
-                  readOnly: description == "",
-                  decoration: InputDecoration(
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    enabled: description != ""
+                Visibility(
+                  visible: description != "",
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 150,
+                        child: TextFormField(
+                          controller: _controller,
+                          maxLines: 10,
+                          readOnly: description == "",
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(top: 10, bottom: 10),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            enabled: description != ""
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          widget.descriptions[selectedIndex] = _controller.text;
+                          buildMap();
+                          setState(() {
+
+                          });
+                        },
+                        child: Text('Save'),
+                      )
+                    ],
                   ),
                 )
             )

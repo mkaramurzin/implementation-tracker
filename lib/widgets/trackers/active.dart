@@ -14,7 +14,7 @@ class Active extends StatelessWidget {
       children: [
         deleteButton,
         Container(
-          margin: EdgeInsets.fromLTRB(7, 5, 10, (tracker.currentStep == maxStep ? 17 : tracker.currentStep*1.6)),
+          margin: EdgeInsets.fromLTRB(7, 5, 10, (tracker.currentStep == maxStep ? 17 : tracker.currentStep)),
           child: Draggable<Tracker>(
             data: tracker,
             feedback: CircleAvatar(

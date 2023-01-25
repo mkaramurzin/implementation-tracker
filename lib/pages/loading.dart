@@ -13,7 +13,7 @@ class _LoadingState extends State<Loading> {
 
   void setup() async {
     Navigator.pushReplacementNamed(context, '/home', arguments: {
-      'widget': Instance(trackerMatrix: [], descriptions: ['test', 'tnt', ''])
+      'widget': Instance(trackerMatrix: [], descriptions: ['test', 'tnt', '', 'lol','lolo'])
     });
   }
 

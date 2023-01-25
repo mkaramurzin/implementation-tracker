@@ -13,6 +13,7 @@ class Default extends StatelessWidget {
       child: DragTarget<Tracker>(
         builder: (context, accepted, rejected) {
           return Container(
+            color: Colors.green,
             height: 74,
             width: 72,
           );
