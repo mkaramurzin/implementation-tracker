@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/services/auth.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:tracker/widgets/tracker.dart';
 
@@ -16,8 +17,9 @@ class _HomeState extends State<Home> {
   Map data = {};
   final _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final AuthService _auth = AuthService();
 
-  void menuOption(int option) {
+  void menuOption(int option) async {
     switch(option) {
       case 0:
         showDialog(
@@ -84,12 +86,17 @@ class _HomeState extends State<Home> {
         Navigator.pushReplacementNamed(context, '/edit', arguments: {
           'widget': instance
         });
+        break;
+
+      case 2:
+        await _auth.signOut();
+        Navigator.pushReplacementNamed(context, '/message');
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('build');
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments as Map;
 
     instance = data['widget'];

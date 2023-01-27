@@ -34,51 +34,51 @@ class _EditState extends State<Edit> {
         centerTitle: true,
       ),
       body: ListView(
-        children: [
-          Container(
-            margin: EdgeInsets.fromLTRB(200, 40, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      implementation,
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(context, '/home', arguments: {
-                                  'widget': original
-                                });
-                              },
-                              child: Text("Cancel"),
+          children: [
+            Container(
+              margin: EdgeInsets.fromLTRB(200, 40, 0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        implementation,
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.all(10),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(context, '/home', arguments: {
+                                    'widget': original
+                                  });
+                                },
+                                child: Text("Cancel"),
+                              ),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(context, '/home', arguments: {
-                                  'widget': Instance(descriptions: implementation.descriptions,
-                                  trackerMatrix: [[]])
-                                });
-                              },
-                              child: Text("Save"),
-                            ),
-                          )
-                        ],
-                      )
-                    ]
-                ),
-              ],
+                            Container(
+                              margin: EdgeInsets.all(10),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(context, '/home', arguments: {
+                                    'widget': Instance(descriptions: implementation.descriptions,
+                                        trackerMatrix: [[]])
+                                  });
+                                },
+                                child: Text("Save"),
+                              ),
+                            )
+                          ],
+                        )
+                      ]
+                  ),
+                ],
+              ),
             ),
-          ),
-        ]
+          ]
       ),
     );
   }

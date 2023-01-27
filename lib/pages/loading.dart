@@ -27,11 +27,11 @@ class _LoadingState extends State<Loading> {
     return Scaffold(
       backgroundColor: Colors.blue[900],
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            setup();
-          }, child: Text("click"),
-        )
+          child: ElevatedButton(
+            onPressed: () {
+              setup();
+            }, child: Text("click"),
+          )
       ),
     );
   }

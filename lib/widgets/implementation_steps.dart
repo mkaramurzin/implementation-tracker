@@ -63,7 +63,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
             ],
           ),
         )
-        :
+            :
         Container(),
         Row(
           crossAxisAlignment: widget.descriptions.length > 3 ?
@@ -74,8 +74,8 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
               height: widget.totalSteps * (widget.editing ? 85 : multiplier),
               width: widget.editing ? 150 : 50,
               child: Column(
-                children: descList.entries.map((entry) => Segment(
-                  connector: widget.editing ?
+                  children: descList.entries.map((entry) => Segment(
+                    connector: widget.editing ?
                     GestureDetector(
                       onTap: () {
                         widget.descriptions.insert(entry.key + 1, "New step description");
@@ -108,93 +108,93 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                         ),
                       ),
                     )
-                  :
+                        :
                     entry.key == descList.length-1 ?
-                      Container()
-                    :
-                      Container(
-                        height: 30,
-                        width: 10,
-                        color: Colors.black,
+                    Container()
+                        :
+                    Container(
+                      height: 30,
+                      width: 10,
+                      color: Colors.black,
+                    ),
+                    deleteButton: widget.editing ?
+                    Container(
+                      margin: EdgeInsets.only(right: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          widget.descriptions.remove(entry.value);
+                          buildMap();
+                          setState(() {
+                            if(widget.totalSteps > 1) {
+                              widget.totalSteps--;
+                            }
+                            selectedIndex = -1;
+                            description = "";
+                          });
+                          _controller.text = description;
+                          _controller.notifyListeners();
+                        },
+                        child: Icon(Icons.delete),
                       ),
-                  deleteButton: widget.editing ?
-                  Container(
-                    margin: EdgeInsets.only(right: 10),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        widget.descriptions.remove(entry.value);
-                        buildMap();
+                    )
+                        :
+                    Container(),
+                    node: GestureDetector(
+                      onTap: () {
                         setState(() {
-                          if(widget.totalSteps > 1) {
-                            widget.totalSteps--;
+                          if(entry.key == selectedIndex) {
+                            description = "";
+                            selectedIndex = -1;
+                          } else {
+                            selectedIndex = entry.key;
+                            description = widget.descriptions[entry.key];
                           }
-                          selectedIndex = -1;
-                          description = "";
+                          _controller.text = description;
+                          _controller.notifyListeners();
                         });
-                        _controller.text = description;
-                        _controller.notifyListeners();
                       },
-                      child: Icon(Icons.delete),
-                    ),
-                  )
-                  :
-                  Container(),
-                  node: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if(entry.key == selectedIndex) {
-                          description = "";
-                          selectedIndex = -1;
-                        } else {
-                          selectedIndex = entry.key;
-                          description = widget.descriptions[entry.key];
-                        }
-                        _controller.text = description;
-                        _controller.notifyListeners();
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 250),
-                      height: 45,
-                      width: 45,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          color: selectedIndex == entry.key ? Colors.blue : Colors.red,
-                          borderRadius: BorderRadius.all(Radius.circular(10))
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 250),
+                        height: 45,
+                        width: 45,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            color: selectedIndex == entry.key ? Colors.blue : Colors.red,
+                            borderRadius: BorderRadius.all(Radius.circular(10))
+                        ),
                       ),
                     ),
-                  ),
-                )).toList()
+                  )).toList()
               ),
             ),
             AnimatedContainer(
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
-              height: 200,
-              width: 300,
-              decoration: BoxDecoration(
-                color: description == "" ? Colors.grey[50] : Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                  boxShadow: description == "" ?
-                      []
-                  :
-                  [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // changes position of shadow
-                    ),
-                  ]
-              ),
-              duration: Duration(milliseconds: 250),
-              child: !widget.editing ?
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                height: 200,
+                width: 300,
+                decoration: BoxDecoration(
+                    color: description == "" ? Colors.grey[50] : Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: description == "" ?
+                    []
+                        :
+                    [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ]
+                ),
+                duration: Duration(milliseconds: 250),
+                child: !widget.editing ?
                 ListView(
                   children: [
                     Text(description)
                   ],
                 )
-                  :
+                    :
                 Visibility(
                   visible: description != "",
                   child: Column(
@@ -206,11 +206,11 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                           maxLines: 10,
                           readOnly: description == "",
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 10, bottom: 10),
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            enabled: description != ""
+                              contentPadding: EdgeInsets.only(top: 10, bottom: 10),
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              enabled: description != ""
                           ),
                         ),
                       ),

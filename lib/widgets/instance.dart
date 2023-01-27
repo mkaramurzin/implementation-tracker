@@ -93,9 +93,9 @@ class _InstanceState extends State<Instance> {
             }
         ))));
     widget.descriptions = widget.descriptions.isEmpty ?
-        List.generate(widget.descriptions.length.toInt(), (index) => "Step $index")
-    :
-        widget.descriptions;
+    List.generate(widget.descriptions.length.toInt(), (index) => "Step $index")
+        :
+    widget.descriptions;
     widget.implement = ImplementationSteps(totalSteps: widget.descriptions.length, descriptions: widget.descriptions,);
     Tracker t1 = Tracker(name: "T1", currentStep: 0, widget: Container());
     Tracker t2 = Tracker(name: "T2", currentStep: 0, widget: Container());
@@ -116,11 +116,11 @@ class _InstanceState extends State<Instance> {
   Widget build(BuildContext context) {
 
     return Container(
-          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-          height: 260 + (widget.descriptions.length * 65),
-          color: Colors.green[50],
-          width: double.infinity,
-          child: ListView(
+        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+        height: 260 + (widget.descriptions.length * 65),
+        color: Colors.green[50],
+        width: double.infinity,
+        child: ListView(
             children: [Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -136,11 +136,11 @@ class _InstanceState extends State<Instance> {
                         color: Colors.red[50],
                         margin: EdgeInsets.fromLTRB(0,0,0,10),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: widget.trackerMatrix.reversed.map((sublist) => Row(
-                              children: sublist.reversed.map((tracker) => tracker.widget).toList()
-                          )
-                          ).toList()
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: widget.trackerMatrix.reversed.map((sublist) => Row(
+                                children: sublist.reversed.map((tracker) => tracker.widget).toList()
+                            )
+                            ).toList()
                         ),
                       ),
                       Container(
@@ -152,7 +152,7 @@ class _InstanceState extends State<Instance> {
                 ),
               ],
             ),]
-          )
-      );
+        )
+    );
   }
 }
