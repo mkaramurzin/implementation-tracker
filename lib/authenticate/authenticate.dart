@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/authenticate/register.dart';
 import 'package:tracker/authenticate/sign_in.dart';
 
 class Authenticate extends StatefulWidget {
@@ -9,10 +10,17 @@ class Authenticate extends StatefulWidget {
 }
 
 class _AuthenticateState extends State<Authenticate> {
+
+  bool showSignIn = true;
+  toggleView() {
+    setState(() => showSignIn = !showSignIn);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SignIn(),
-    );
+    return showSignIn ?
+      SignIn(toggle: toggleView)
+    :
+      Register(toggle: toggleView);
   }
 }

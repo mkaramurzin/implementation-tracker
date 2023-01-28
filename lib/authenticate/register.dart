@@ -2,17 +2,18 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/services/auth.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   final toggle;
-  SignIn({required this.toggle});
+  Register({required this.toggle});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
 
   final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   // text field state
   String email = '';
@@ -27,7 +28,7 @@ class _SignInState extends State<SignIn> {
         elevation: 0,
         backgroundColor: Colors.yellow[800],
         title: Text(
-          'Sign In',
+          'Register',
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
@@ -45,11 +46,13 @@ class _SignInState extends State<SignIn> {
             height: 300,
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
             child: Form(
+              key: _formKey,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 20),
                     TextFormField(
+                      validator: (val) => val == '' ? 'Enter an email' : null,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         border: new OutlineInputBorder(),
@@ -65,6 +68,7 @@ class _SignInState extends State<SignIn> {
                     ),
                     SizedBox(height: 20),
                     TextFormField(
+                      validator: (val) => val!.length < 6 ? 'Password must be at least 6 characters' : null,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         border: new OutlineInputBorder(),
@@ -86,12 +90,12 @@ class _SignInState extends State<SignIn> {
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
                           child: RichText(text: TextSpan(
-                              text: 'Register',
-                              style: new TextStyle(color: Colors.blue),
-                              recognizer: new TapGestureRecognizer()
-                                ..onTap = () {
-                                  widget.toggle();
-                                }
+                            text: 'Sign in',
+                            style: new TextStyle(color: Colors.blue),
+                            recognizer: new TapGestureRecognizer()
+                              ..onTap = () {
+                                widget.toggle();
+                              }
                           )),
                         ),
                         ElevatedButton(
@@ -104,11 +108,20 @@ class _SignInState extends State<SignIn> {
                               )
                           ),
                           child: Text(
-                            'Sign in',
+                            'Register',
                             style: TextStyle(color: Colors.black),
                           ),
                           onPressed: () async {
-
+                            if(_formKey.currentState!.validate()) {
+                              dynamic result =
+                              await _auth.registerWithEmailAndPassword(email, password);
+                              if(result == null) {
+                                setState(() {
+                                  error = 'Enter a valid email';
+                                });
+                              }
+                              // Navigator.pushReplacementNamed(context, '/home');
+                            }
                           },
                         ),
                       ],
