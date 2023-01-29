@@ -120,7 +120,6 @@ class _RegisterState extends State<Register> {
                                   error = 'Enter a valid email';
                                 });
                               }
-                              // Navigator.pushReplacementNamed(context, '/home');
                             }
                           },
                         ),

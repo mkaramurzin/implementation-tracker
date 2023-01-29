@@ -13,6 +13,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   // text field state
   String email = '';
@@ -45,11 +46,13 @@ class _SignInState extends State<SignIn> {
             height: 300,
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
             child: Form(
+              key: _formKey,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 20),
                     TextFormField(
+                      validator: (val) => val == '' ? 'Enter an email' : null,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         border: new OutlineInputBorder(),
@@ -65,6 +68,7 @@ class _SignInState extends State<SignIn> {
                     ),
                     SizedBox(height: 20),
                     TextFormField(
+                      validator: (val) => val!.length < 6 ? 'Password must be at least 6 characters' : null,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         border: new OutlineInputBorder(),
@@ -108,7 +112,14 @@ class _SignInState extends State<SignIn> {
                             style: TextStyle(color: Colors.black),
                           ),
                           onPressed: () async {
-
+                            if(_formKey.currentState!.validate()) {
+                              dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                              if(result == null) {
+                                setState(() {
+                                  error = 'Could not sign in with those credentials';
+                                });
+                              }
+                            }
                           },
                         ),
                       ],
