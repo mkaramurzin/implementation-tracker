@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tracker/services/database.dart';
 import 'package:tracker/widgets/instance.dart';
@@ -51,10 +53,18 @@ class AuthService {
       User? user = result.user;
 
       // create a new document for the user with the uid
-      // starter data
-      Instance instance = Instance(trackerMatrix: [], descriptions: ['node1', 'node2', 'node3', 'node4']);
-      List<Instance> instList = [instance];
-      print(await Database(uid: user!.uid).updateUserData(0));
+      List<List<String>> trackerMatrix = [
+        ['T10', 'T20', 'T30'],
+        ['T40', '', ''],
+        ['','',''],
+        ['','',''],
+        ['','',''],
+      ];
+      String jsonMatrix = jsonEncode(trackerMatrix);
+      await Database(uid: user!.uid).updateUserData(
+          jsonMatrix,
+          ['node1', 'node2', 'node3', 'node4', 'node5']
+      );
 
       return user;
     } catch(e) {

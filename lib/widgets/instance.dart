@@ -1,10 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/widgets/implementation_steps.dart';
 import 'package:tracker/widgets/trackers/default.dart';
 import 'package:tracker/widgets/trackers/active.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'dart:convert';
 
 class Instance extends StatefulWidget {
   late Widget implement;
@@ -20,45 +21,59 @@ class Instance extends StatefulWidget {
 class _InstanceState extends State<Instance> {
 
   int largestRow = 0;
+  List<List<String>> names = [];
+  bool _isInit = false;
 
   void updateMatrix() {
-    for(int i = 0; i < widget.trackerMatrix.length; i++) {
-      widget.trackerMatrix[i].sort((a, b) {
-        if (a.name.isEmpty && !b.name.isEmpty) {
-          return 1;
-        }
-        if (!a.name.isEmpty && b.name.isEmpty) {
-          return -1;
-        }
-        return 0;
-      });
-      for(int j = 0; j < widget.trackerMatrix[i].length; j++) {
-        if(widget.trackerMatrix[i][j].name != "") {
-          widget.trackerMatrix[i][j].currentStep = i.toDouble();
-          widget.trackerMatrix[i][j].widget =
-          widget.trackerMatrix[i][j].currentStep != widget.descriptions.length - 1 ?
-          Active(
-            tracker: widget.trackerMatrix[i][j],
-            deleteButton: Container(),
-            maxStep: widget.descriptions.length - 1,
-          )
-              :
-          Active(
-              tracker: widget.trackerMatrix[i][j],
-              maxStep: widget.descriptions.length - 1,
-              deleteButton: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: Icon(Icons.delete),
-                onPressed: () {
-                  setState(() {
-                    widget.trackerMatrix[widget.descriptions.length.toInt()-1].remove(widget.trackerMatrix[i][j]);
-                    updateMatrix();
-                  });
-                },
+    widget.trackerMatrix = [[]];
+    for(int i = 0; i < names.length; i++) {
+      List<Tracker> row = [];
+      for(int j = 0; j < names[i].length; j++) {
+        if(names[i][j].isNotEmpty) {
+          row.add(
+            Tracker(
+              name: names[i][j],
+              widget: i == names.length-1 ?
+              Active(
+                  name: names[i][j],
+                  maxStep: widget.descriptions.length - 1,
+                  delete: true,
+                  deleteButton: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    child: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        names[i].remove(names[i][j]);
+                        updateMatrix();
+                      });
+                    },
+                  )
               )
+              :
+              Active(
+                name: names[i][j],
+                deleteButton: Container(),
+                maxStep: widget.descriptions.length - 1,
+              )
+            )
           );
         }
       }
+      row.add(
+          Tracker(name: "", widget: Default(
+              delete: i == names.length-1,
+              onAccept: (data) {
+                setState(() {
+                  names.forEach((subList) {
+                    subList.removeWhere((name) => name == data);
+                  });
+                });
+                names[i].add(data);
+                updateMatrix();
+              },
+          ))
+      );
+      widget.trackerMatrix.add(row);
     }
     fillRows();
   }
@@ -77,43 +92,34 @@ class _InstanceState extends State<Instance> {
   @override
   void initState() {
     super.initState();
-    widget.trackerMatrix =
-        List.generate(widget.descriptions.length, (i) => List.generate(1, (j) => Tracker(name: "", widget: Default(
-            onAccept: (data) {
-              setState(() {
-                widget.trackerMatrix.forEach((subList) {
-                  subList.removeWhere((e) => e.name == data.name);
-                });
-              });
-              widget.trackerMatrix[i].add(data);
-              updateMatrix();
-            },
-            onWillAccept: (data) {
-              return true;
-            }
-        ))));
     widget.descriptions = widget.descriptions.isEmpty ?
     List.generate(widget.descriptions.length.toInt(), (index) => "Step $index")
         :
     widget.descriptions;
     widget.implement = ImplementationSteps(totalSteps: widget.descriptions.length, descriptions: widget.descriptions,);
-    Tracker t1 = Tracker(name: "T1", currentStep: 0, widget: Container());
-    Tracker t2 = Tracker(name: "T2", currentStep: 0, widget: Container());
-    widget.trackerMatrix[t1.currentStep.toInt()].add(t1);
-    widget.trackerMatrix[t2.currentStep.toInt()].add(t2);
-    t1 = Tracker(name: "T3", currentStep: 0, widget: Container());
-    t2 = Tracker(name: "T4", currentStep: 0, widget: Container());
-    widget.trackerMatrix[t1.currentStep.toInt()].add(t1);
-    widget.trackerMatrix[t2.currentStep.toInt()].add(t2);
-    t1 = Tracker(name: "T5", currentStep: 0, widget: Container());
-    t2 = Tracker(name: "T6", currentStep: 0, widget: Container());
-    widget.trackerMatrix[t1.currentStep.toInt()].add(t1);
-    widget.trackerMatrix[t2.currentStep.toInt()].add(t2);
     updateMatrix();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    if(!_isInit) {
+      final data = Provider.of<QuerySnapshot?>(context);
+      List dataMap = data!.docs.toList();
+      var decodedMatrix = jsonDecode(dataMap[0].get('list'));
+      List<List<String>> newList = List<List<String>>.from(decodedMatrix.map((row){
+        return List<String>.from(row.map((value) => (value.toString())));
+      }));
+      print(names);
+      print(newList);
+      names = newList;
+      updateMatrix();
+      // print(data.docs);
+      // for(var doc in data.docs) {
+      //   print(doc.data());
+      // }
+      _isInit = true;
+    }
 
     return Container(
         margin: EdgeInsets.fromLTRB(0, 0, 0, 0),

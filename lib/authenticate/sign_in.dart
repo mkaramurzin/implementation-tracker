@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/services/auth.dart';
+import 'package:tracker/services/extension.dart';
 
 class SignIn extends StatefulWidget {
   final toggle;
@@ -26,10 +27,10 @@ class _SignInState extends State<SignIn> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.yellow[800],
+        backgroundColor: '#bfeb91'.toColor(),
         title: Text(
           'Sign In',
-          style: TextStyle(color: Colors.black),
+
         ),
         centerTitle: true,
       ),

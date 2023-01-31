@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/services/auth.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:tracker/widgets/tracker.dart';
+import 'package:tracker/services/database.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -100,49 +104,55 @@ class _HomeState extends State<Home> {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments as Map;
 
     instance = data['widget'];
-    tabs.add(instance);
+    // tabs.add(instance);
 
-    return DefaultTabController(
-      length: tabs.length,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Implementation Tracker"),
-          centerTitle: true,
-          actions: [
-            PopupMenuButton<int>(
-              onSelected: (item) {
-                menuOption(item);
-                setState(() {
+    
 
-                });
-              },
-              position: PopupMenuPosition.under,
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 0,
-                  child: Text("Add Tracker"),
-                ),
-                PopupMenuItem(
-                  value: 1,
-                  child: Text("Edit Steps"),
-                ),
-                PopupMenuDivider(),
-                PopupMenuItem(
-                  value: 2,
-                  child: Text("Sign Out"),
-                ),
-              ],
-            )
-          ],
-        ),
-        body: Center(child: instance),
-        bottomNavigationBar: Material(
-          color: Colors.blue,
-          child: TabBar(
-            isScrollable: true,
-            tabs: tabs.map((title) {
-              return Tab(text: 'tab');
-            }).toList(),
+    return StreamProvider<QuerySnapshot?>.value(
+      value: Database().data,
+      initialData: null,
+      child: DefaultTabController(
+        length: tabs.length,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Implementation Tracker"),
+            centerTitle: true,
+            actions: [
+              PopupMenuButton<int>(
+                onSelected: (item) {
+                  menuOption(item);
+                  setState(() {
+
+                  });
+                },
+                position: PopupMenuPosition.under,
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 0,
+                    child: Text("Add Tracker"),
+                  ),
+                  PopupMenuItem(
+                    value: 1,
+                    child: Text("Edit Steps"),
+                  ),
+                  PopupMenuDivider(),
+                  PopupMenuItem(
+                    value: 2,
+                    child: Text("Sign Out"),
+                  ),
+                ],
+              )
+            ],
+          ),
+          body: Center(child: instance),
+          bottomNavigationBar: Material(
+            color: Colors.blue,
+            child: TabBar(
+              isScrollable: true,
+              tabs: tabs.map((title) {
+                return Tab(text: 'tab');
+              }).toList(),
+            ),
           ),
         ),
       ),

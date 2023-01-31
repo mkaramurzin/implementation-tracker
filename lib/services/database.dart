@@ -4,15 +4,21 @@ import 'package:tracker/widgets/instance.dart';
 class Database {
 
   final String uid;
-  Database({required this.uid});
+  Database({this.uid = ""});
 
   // collection references
   final CollectionReference trackerCollection = FirebaseFirestore.instance.collection('trackers');
 
-  Future updateUserData(int currentInstance) async {
+  Future updateUserData(String trackerList, List<String> descriptions) async {
     return await trackerCollection.doc(uid).set({
-      'currentInstance': currentInstance,
+      'list': trackerList,
+      'descriptions': descriptions,
     });
+  }
+
+  // get firestore stream
+  Stream<QuerySnapshot?> get data {
+    return trackerCollection.snapshots();
   }
 
 }
