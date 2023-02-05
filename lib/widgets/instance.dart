@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/models/tracker_data.dart';
+import 'package:tracker/services/database.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/widgets/implementation_steps.dart';
 import 'package:tracker/widgets/trackers/default.dart';
@@ -6,6 +9,8 @@ import 'package:tracker/widgets/trackers/active.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
+
+import '../services/auth.dart';
 
 class Instance extends StatefulWidget {
   late Widget implement;
@@ -22,7 +27,9 @@ class _InstanceState extends State<Instance> {
 
   int largestRow = 0;
   List<List<String>> names = [];
+  List<String> descriptions = [];
   bool _isInit = false;
+  final AuthService _auth = AuthService();
 
   void updateMatrix() {
     widget.trackerMatrix = [[]];
@@ -36,14 +43,17 @@ class _InstanceState extends State<Instance> {
               widget: i == names.length-1 ?
               Active(
                   name: names[i][j],
-                  maxStep: widget.descriptions.length - 1,
                   delete: true,
                   deleteButton: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     child: Icon(Icons.delete),
-                    onPressed: () {
+                    onPressed: () async {
+                      names[i].remove(names[i][j]);
+                      await Database(uid: _auth.user!.uid).updateUserData(
+                        names,
+                        descriptions,
+                      );
                       setState(() {
-                        names[i].remove(names[i][j]);
                         updateMatrix();
                       });
                     },
@@ -53,7 +63,6 @@ class _InstanceState extends State<Instance> {
               Active(
                 name: names[i][j],
                 deleteButton: Container(),
-                maxStep: widget.descriptions.length - 1,
               )
             )
           );
@@ -62,13 +71,17 @@ class _InstanceState extends State<Instance> {
       row.add(
           Tracker(name: "", widget: Default(
               delete: i == names.length-1,
-              onAccept: (data) {
+              onAccept: (data) async {
                 setState(() {
                   names.forEach((subList) {
                     subList.removeWhere((name) => name == data);
                   });
                 });
                 names[i].add(data);
+                await Database(uid: _auth.user!.uid).updateUserData(
+                  names,
+                  descriptions
+                );
                 updateMatrix();
               },
           ))
@@ -76,6 +89,7 @@ class _InstanceState extends State<Instance> {
       widget.trackerMatrix.add(row);
     }
     fillRows();
+
   }
 
   void fillRows() {
@@ -90,40 +104,22 @@ class _InstanceState extends State<Instance> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    widget.descriptions = widget.descriptions.isEmpty ?
-    List.generate(widget.descriptions.length.toInt(), (index) => "Step $index")
-        :
-    widget.descriptions;
-    widget.implement = ImplementationSteps(totalSteps: widget.descriptions.length, descriptions: widget.descriptions,);
-    updateMatrix();
-  }
-
-  @override
   Widget build(BuildContext context) {
 
+    final data = Provider.of<TrackerData?>(context);
+
     if(!_isInit) {
-      final data = Provider.of<QuerySnapshot?>(context);
-      List dataMap = data!.docs.toList();
-      var decodedMatrix = jsonDecode(dataMap[0].get('list'));
-      List<List<String>> newList = List<List<String>>.from(decodedMatrix.map((row){
-        return List<String>.from(row.map((value) => (value.toString())));
-      }));
-      print(names);
-      print(newList);
-      names = newList;
-      updateMatrix();
-      // print(data.docs);
-      // for(var doc in data.docs) {
-      //   print(doc.data());
-      // }
+      descriptions = data!.descriptions;
+      widget.implement = ImplementationSteps(totalSteps: descriptions.length, descriptions: descriptions,);
       _isInit = true;
     }
+    names = data!.trackerMatrix;
+    updateMatrix();
+
 
     return Container(
         margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-        height: 260 + (widget.descriptions.length * 65),
+        height: 260 + (descriptions.length * 65),
         color: Colors.green[50],
         width: double.infinity,
         child: ListView(

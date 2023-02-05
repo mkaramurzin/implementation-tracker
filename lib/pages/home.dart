@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/auth.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tracker/widgets/trackers/active.dart';
+import 'package:tracker/widgets/tracker_form.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,71 +22,14 @@ class _HomeState extends State<Home> {
   late List<Instance> tabs = [];
   late Instance instance;
   Map data = {};
-  final _textController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   final AuthService _auth = AuthService();
 
   void menuOption(int option) async {
     switch(option) {
       case 0:
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                  title: Text("Add Tracker"),
-                  content: Container(
-                    height: 150,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _textController,
-                            autofocus: true,
-                            decoration: InputDecoration(
-                                labelText: 'Tracker Name'
-                            ),
-                            validator: (text) {
-                              if(_textController.text.isEmpty) {
-                                return "Please name the tracker";
-                              } else if(instance.trackerMatrix.any((sublist) => sublist.where((tracker) => tracker.name == _textController.text).isNotEmpty)) {
-                                return "Tracker with that name already exists";
-                              }
-                              // else if(trackerMatrix[0].where((element) => element.fill == false).length == rowMax) {
-                              //   return "The bottom row cannot hold anymore trackers";
-                              // }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            child: Text("Add"),
-                            onPressed: () {
-                              if(_formKey.currentState!.validate()) {
-                                setState(() {
-                                  for(int i = 0; i < instance.trackerMatrix[0].length; i++) {
-                                    if(instance.trackerMatrix[0][i].name == "") {
-                                      instance.trackerMatrix[0].add(Tracker(
-                                          name: _textController.text,
-                                          widget: Container()
-                                      ));
-                                      break;
-                                    }
-                                  }
-                                  // trackerMatrix[0].add(Tracker(name: _textController.text, widget: Container()));
-                                  _textController.text = "";
-                                  // updateMatrix();
-                                });
-                              }
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-              );
-            }
-        );
+        showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) {
+          return TrackerForm();
+        });
         break;
 
       case 1:
@@ -106,10 +52,9 @@ class _HomeState extends State<Home> {
     instance = data['widget'];
     // tabs.add(instance);
 
-    
 
-    return StreamProvider<QuerySnapshot?>.value(
-      value: Database().data,
+    return StreamProvider<TrackerData?>.value(
+      value: Database(uid: _auth.user!.uid).userData,
       initialData: null,
       child: DefaultTabController(
         length: tabs.length,
@@ -119,6 +64,7 @@ class _HomeState extends State<Home> {
             centerTitle: true,
             actions: [
               PopupMenuButton<int>(
+                icon: Icon(Icons.settings),
                 onSelected: (item) {
                   menuOption(item);
                   setState(() {

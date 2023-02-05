@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 class Active extends StatelessWidget {
   String name;
   Widget deleteButton;
-  double maxStep;
   bool delete;
-  Active({super.key, required this.name, required this.deleteButton, required this.maxStep, this.delete = false});
+  Active({super.key, required this.name, required this.deleteButton, this.delete = false});
 
   @override
   Widget build(BuildContext context) {

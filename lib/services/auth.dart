@@ -60,9 +60,8 @@ class AuthService {
         ['','',''],
         ['','',''],
       ];
-      String jsonMatrix = jsonEncode(trackerMatrix);
       await Database(uid: user!.uid).updateUserData(
-          jsonMatrix,
+          trackerMatrix,
           ['node1', 'node2', 'node3', 'node4', 'node5']
       );
 
