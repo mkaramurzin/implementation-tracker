@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/services/auth.dart';
+import 'package:tracker/services/extension.dart';
 
 class Register extends StatefulWidget {
   final toggle;
@@ -26,113 +27,139 @@ class _RegisterState extends State<Register> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.yellow[800],
+        backgroundColor: Colors.blueGrey[900],
         title: Text(
           'Register',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: "#FFA611".toColor()),
         ),
         centerTitle: true,
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: Container(
-            margin: EdgeInsets.only(top: 150),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey, width: 1),
-                borderRadius: BorderRadius.circular(10)
-            ),
-            width: 500,
-            height: 300,
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 20),
-                    TextFormField(
-                      validator: (val) => val == '' ? 'Enter an email' : null,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        border: new OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                      ),
-                      onChanged: (val) {
-                        setState(() {
-                          email = val;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      validator: (val) => val!.length < 6 ? 'Password must be at least 6 characters' : null,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: new OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                      ),
-                      obscureText: true,
-                      onChanged: (val) {
-                        setState(() {
-                          password = val;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                margin: EdgeInsets.only(top: 150),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey, width: 1),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                width: 500,
+                height: 300,
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: RichText(text: TextSpan(
-                            text: 'Sign in',
-                            style: new TextStyle(color: Colors.blue),
-                            recognizer: new TapGestureRecognizer()
-                              ..onTap = () {
-                                widget.toggle();
-                              }
-                          )),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.yellow[800],
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(2)
-                              )
+                        SizedBox(height: 20),
+                        TextFormField(
+                          validator: (val) => val == '' ? 'Enter an email' : null,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            border: new OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.grey[100],
                           ),
-                          child: Text(
-                            'Register',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          onPressed: () async {
+                          onChanged: (val) {
+                            setState(() {
+                              email = val;
+                            });
+                          },
+                          onFieldSubmitted: (val) async {
                             if(_formKey.currentState!.validate()) {
                               dynamic result =
                               await _auth.registerWithEmailAndPassword(email, password);
-                              if(result == null) {
+                              if(result is String) {
                                 setState(() {
-                                  error = 'Enter a valid email';
+                                  error = result;
                                 });
                               }
                             }
                           },
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      error,
-                      style: TextStyle(color: Colors.red, fontSize: 14),
-                    )
-                  ]
-              ),
-            )
+                        SizedBox(height: 10),
+                        TextFormField(
+                          validator: (val) => val!.length < 6 ? 'Password must be at least 6 characters' : null,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            border: new OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                          ),
+                          obscureText: true,
+                          onChanged: (val) {
+                            setState(() {
+                              password = val;
+                            });
+                          },
+                          onFieldSubmitted: (val) async {
+                            if(_formKey.currentState!.validate()) {
+                              dynamic result =
+                                  await _auth.registerWithEmailAndPassword(email, password);
+                              if(result is String) {
+                                setState(() {
+                                  error = result;
+                                });
+                              }
+                            }
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            MouseRegion(
+                              cursor: SystemMouseCursors.click,
+                              child: RichText(text: TextSpan(
+                                text: 'Sign in',
+                                style: new TextStyle(color: Colors.blue),
+                                recognizer: new TapGestureRecognizer()
+                                  ..onTap = () {
+                                    widget.toggle();
+                                  }
+                              )),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: "#FFA611".toColor(),
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(2)
+                                  )
+                              ),
+                              child: Text(
+                                'Register',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              onPressed: () async {
+                                if(_formKey.currentState!.validate()) {
+                                  dynamic result =
+                                  await _auth.registerWithEmailAndPassword(email, password);
+                                  if(result is String) {
+                                    setState(() {
+                                      error = result;
+                                    });
+                                  }
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          error,
+                          style: TextStyle(color: Colors.red, fontSize: 14),
+                        )
+                      ]
+                  ),
+                )
+            ),
+          ),
         ),
       ),
     );

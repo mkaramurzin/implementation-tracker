@@ -18,9 +18,12 @@ class _AuthenticateState extends State<Authenticate> {
 
   @override
   Widget build(BuildContext context) {
-    return showSignIn ?
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 200),
+      child: showSignIn ?
       SignIn(toggle: toggleView)
-    :
-      Register(toggle: toggleView);
+          :
+      Register(toggle: toggleView)
+    );
   }
 }

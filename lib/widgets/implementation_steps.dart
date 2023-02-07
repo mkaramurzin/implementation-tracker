@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/services/extension.dart';
 
 class ImplementationSteps extends StatefulWidget {
   int totalSteps;
@@ -16,7 +17,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
   String description = "";
   final _controller = TextEditingController();
 
-  late Map<int, String> descList;
+  Map<int, String> descList = {};
 
   void buildMap() {
     if(widget.descriptions.length == 0) {
@@ -31,6 +32,8 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
   void initState() {
     super.initState();
     buildMap();
+    description = descList[0]!;
+    selectedIndex = widget.editing ? -1 : 0;
   }
 
   @override
@@ -69,7 +72,8 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
           crossAxisAlignment: widget.descriptions.length > 3 ?
           CrossAxisAlignment.center : CrossAxisAlignment.end,
           children: [
-            Container(
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
               color: Colors.yellow[100],
               height: widget.totalSteps * (widget.editing ? 85 : multiplier),
               width: widget.editing ? 150 : 50,
@@ -88,22 +92,25 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                           _controller.notifyListeners();
                         });
                       },
-                      child: Container(
-                        margin: EdgeInsets.all(5),
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2.0,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          margin: EdgeInsets.all(5),
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: 2.0,
+                            ),
                           ),
-                        ),
-                        child: Center(
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.blue,
+                          child: Center(
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.blue,
+                            ),
                           ),
                         ),
                       ),
@@ -159,7 +166,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                         width: 45,
                         decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
-                            color: selectedIndex == entry.key ? Colors.blue : Colors.red,
+                            color: selectedIndex == entry.key ? Colors.blueGrey[800] : "#F5820D".toColor(),
                             borderRadius: BorderRadius.all(Radius.circular(10))
                         ),
                       ),
@@ -180,7 +187,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                         :
                     [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withOpacity(0.4),
                         spreadRadius: 5,
                         blurRadius: 7,
                         offset: Offset(0, 3), // changes position of shadow
@@ -219,7 +226,8 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                           widget.descriptions[selectedIndex] = _controller.text;
                           buildMap();
                           setState(() {
-
+                            description = "";
+                            selectedIndex = -1;
                           });
                         },
                         child: Text('Save'),

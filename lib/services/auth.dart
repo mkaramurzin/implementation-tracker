@@ -25,7 +25,7 @@ class AuthService {
       print(e.toString());
       return null;
     }
-}
+  }
 
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
@@ -37,9 +37,8 @@ class AuthService {
       User? user = result.user;
 
       return user;
-    } catch(e) {
-      print(e.toString());
-      return null;
+    } on FirebaseAuthException catch(e) {
+      return e.message;
     }
   }
 
@@ -66,9 +65,8 @@ class AuthService {
       );
 
       return user;
-    } catch(e) {
-      print(e.toString());
-      return null;
+    } on FirebaseAuthException catch(e) {
+      return e.message;
     }
   }
 
@@ -80,5 +78,10 @@ class AuthService {
       print(e.toString());
       return null;
     }
+  }
+
+  // reset password
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 }

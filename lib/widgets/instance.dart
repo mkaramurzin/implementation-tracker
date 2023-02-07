@@ -14,10 +14,9 @@ import '../services/auth.dart';
 
 class Instance extends StatefulWidget {
   late Widget implement;
-  List<List<Tracker>> trackerMatrix;
   List<String> descriptions;
   int rowMax;
-  Instance({super.key, required this.descriptions, required this.trackerMatrix, this.rowMax = 8});
+  Instance({super.key, required this.descriptions, this.rowMax = 8});
 
   @override
   State<Instance> createState() => _InstanceState();
@@ -26,13 +25,14 @@ class Instance extends StatefulWidget {
 class _InstanceState extends State<Instance> {
 
   int largestRow = 0;
+  List<List<Tracker>> trackerMatrix = [[]];
   List<List<String>> names = [];
   List<String> descriptions = [];
   bool _isInit = false;
   final AuthService _auth = AuthService();
 
   void updateMatrix() {
-    widget.trackerMatrix = [[]];
+    trackerMatrix = [[]];
     for(int i = 0; i < names.length; i++) {
       List<Tracker> row = [];
       for(int j = 0; j < names[i].length; j++) {
@@ -86,17 +86,17 @@ class _InstanceState extends State<Instance> {
               },
           ))
       );
-      widget.trackerMatrix.add(row);
+      trackerMatrix.add(row);
     }
     fillRows();
 
   }
 
   void fillRows() {
-    widget.trackerMatrix.forEach((sublist) {
+    trackerMatrix.forEach((sublist) {
       sublist.removeWhere((element) => element.fill);
     });
-    widget.trackerMatrix.forEach((sublist) {
+    trackerMatrix.forEach((sublist) {
       while(sublist.length < widget.rowMax) {
         sublist.add(Tracker(fill: true, name: "", widget: Container(width: 67, height: 1)));
       }
@@ -139,7 +139,7 @@ class _InstanceState extends State<Instance> {
                         margin: EdgeInsets.fromLTRB(0,0,0,10),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: widget.trackerMatrix.reversed.map((sublist) => Row(
+                            children: trackerMatrix.reversed.map((sublist) => Row(
                                 children: sublist.reversed.map((tracker) => tracker.widget).toList()
                             )
                             ).toList()

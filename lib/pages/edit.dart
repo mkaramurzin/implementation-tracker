@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/services/extension.dart';
 import 'package:tracker/widgets/implementation_steps.dart';
 import 'package:tracker/widgets/instance.dart';
+
+import '../services/auth.dart';
 
 class Edit extends StatefulWidget {
   const Edit({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class _EditState extends State<Edit> {
   late ImplementationSteps implementation;
   late Instance original;
   bool _isInit = false;
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,8 @@ class _EditState extends State<Edit> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Steps"),
+        backgroundColor: Colors.blueGrey[900],
+        title: Text("Edit Steps", style: TextStyle(color: "#FFA611".toColor())),
         centerTitle: true,
       ),
       body: ListView(
@@ -46,7 +51,6 @@ class _EditState extends State<Edit> {
                         implementation,
                         SizedBox(height: 20),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
                               margin: EdgeInsets.all(10),
@@ -64,8 +68,7 @@ class _EditState extends State<Edit> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   Navigator.pushReplacementNamed(context, '/home', arguments: {
-                                    'widget': Instance(descriptions: implementation.descriptions,
-                                        trackerMatrix: [[]])
+                                    'widget': Instance(descriptions: implementation.descriptions)
                                   });
                                 },
                                 child: Text("Save"),

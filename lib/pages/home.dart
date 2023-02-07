@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/auth.dart';
+import 'package:tracker/services/extension.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/services/database.dart';
@@ -60,11 +61,12 @@ class _HomeState extends State<Home> {
         length: tabs.length,
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Implementation Tracker"),
+            backgroundColor: Colors.blueGrey[900],
+            title: Text("Implementation Tracker", style: TextStyle(color: "#FFA611".toColor())),
             centerTitle: true,
             actions: [
               PopupMenuButton<int>(
-                icon: Icon(Icons.settings),
+                icon: Icon(Icons.settings, color: "#FFA611".toColor()),
                 onSelected: (item) {
                   menuOption(item);
                   setState(() {
@@ -92,7 +94,7 @@ class _HomeState extends State<Home> {
           ),
           body: Center(child: instance),
           bottomNavigationBar: Material(
-            color: Colors.blue,
+            color: Colors.blueGrey[900],
             child: TabBar(
               isScrollable: true,
               tabs: tabs.map((title) {
