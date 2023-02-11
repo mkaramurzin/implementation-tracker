@@ -52,17 +52,7 @@ class AuthService {
       User? user = result.user;
 
       // create a new document for the user with the uid
-      List<List<String>> trackerMatrix = [
-        ['T10', 'T20', 'T30'],
-        ['T40', '', ''],
-        ['','',''],
-        ['','',''],
-        ['','',''],
-      ];
-      await Database(uid: user!.uid).updateUserData(
-          trackerMatrix,
-          ['node1', 'node2', 'node3', 'node4', 'node5']
-      );
+      await Database(uid: user!.uid).setUserData();
 
       return user;
     } on FirebaseAuthException catch(e) {

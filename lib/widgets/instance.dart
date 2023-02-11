@@ -104,6 +104,13 @@ class _InstanceState extends State<Instance> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // await Database(uid: _auth.user!.uid).
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     final data = Provider.of<TrackerData?>(context);
