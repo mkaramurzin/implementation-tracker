@@ -20,7 +20,8 @@ class _LoadingState extends State<Loading> {
   void setup() async {
     await Database(uid: _auth.user!.uid).setPath();
     Navigator.pushReplacementNamed(context, '/home', arguments: {
-      'widget': Instance(descriptions: ['test', 'tnt', '', 'lol','lolo'])
+      // 'widget': Instance(name: "placeholder", descriptions: ['test', 'tnt', '', 'lol','lolo']), // TODO get rid of this line
+      'names': await Database(uid: _auth.user!.uid).names
     });
   }
 

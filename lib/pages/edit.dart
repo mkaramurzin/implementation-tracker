@@ -4,6 +4,7 @@ import 'package:tracker/widgets/implementation_steps.dart';
 import 'package:tracker/widgets/instance.dart';
 
 import '../services/auth.dart';
+import '../services/database.dart';
 
 class Edit extends StatefulWidget {
   const Edit({Key? key}) : super(key: key);
@@ -55,9 +56,9 @@ class _EditState extends State<Edit> {
                             Container(
                               margin: EdgeInsets.all(10),
                               child: ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   Navigator.pushReplacementNamed(context, '/home', arguments: {
-                                    'widget': original
+                                    'names': await Database(uid: _auth.user!.uid).names,
                                   });
                                 },
                                 child: Text("Cancel"),
@@ -66,9 +67,9 @@ class _EditState extends State<Edit> {
                             Container(
                               margin: EdgeInsets.all(10),
                               child: ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   Navigator.pushReplacementNamed(context, '/home', arguments: {
-                                    'widget': Instance(descriptions: implementation.descriptions)
+                                    'names': await Database(uid: _auth.user!.uid).names,
                                   });
                                 },
                                 child: Text("Save"),

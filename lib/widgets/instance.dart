@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/database.dart';
+import 'package:tracker/services/extension.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/widgets/implementation_steps.dart';
+import 'package:tracker/widgets/tracker_form.dart';
 import 'package:tracker/widgets/trackers/default.dart';
 import 'package:tracker/widgets/trackers/active.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,10 +15,11 @@ import 'dart:convert';
 import '../services/auth.dart';
 
 class Instance extends StatefulWidget {
+  String name;
   late Widget implement;
-  List<String> descriptions;
+  List<String> descriptions = [];
   int rowMax;
-  Instance({super.key, required this.descriptions, this.rowMax = 8});
+  Instance({required this.name, super.key, this.rowMax = 8});
 
   @override
   State<Instance> createState() => _InstanceState();
@@ -28,6 +31,7 @@ class _InstanceState extends State<Instance> {
   List<List<Tracker>> trackerMatrix = [[]];
   List<List<String>> names = [];
   List<String> descriptions = [];
+  String path = "";
   bool _isInit = false;
   final AuthService _auth = AuthService();
 
@@ -50,8 +54,10 @@ class _InstanceState extends State<Instance> {
                     onPressed: () async {
                       names[i].remove(names[i][j]);
                       await Database(uid: _auth.user!.uid).updateUserData(
+                        widget.name,
                         names,
                         descriptions,
+                        path,
                       );
                       setState(() {
                         updateMatrix();
@@ -79,8 +85,10 @@ class _InstanceState extends State<Instance> {
                 });
                 names[i].add(data);
                 await Database(uid: _auth.user!.uid).updateUserData(
+                  widget.name,
                   names,
-                  descriptions
+                  descriptions,
+                  path
                 );
                 updateMatrix();
               },
@@ -103,6 +111,27 @@ class _InstanceState extends State<Instance> {
     });
   }
 
+  void menuOption(int option) async {
+    switch(option) {
+      case 0:
+        showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) {
+          return TrackerForm(path: path);
+        });
+        break;
+
+      case 1:
+        Navigator.pushReplacementNamed(context, '/edit', arguments: {
+          'widget': this.widget
+        });
+        break;
+
+      case 2:
+        await _auth.signOut();
+        Navigator.pushReplacementNamed(context, '/message');
+        break;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -113,55 +142,119 @@ class _InstanceState extends State<Instance> {
   @override
   Widget build(BuildContext context) {
 
-    final data = Provider.of<TrackerData?>(context);
-
-    if(!_isInit) {
-      descriptions = data!.descriptions;
-      widget.implement = ImplementationSteps(totalSteps: descriptions.length, descriptions: descriptions,);
-      _isInit = true;
+    final data = Provider.of<List<TrackerData?>?>(context) ?? [];
+    for(var tracker in data) {
+      if(tracker!.name == widget.name) {
+        descriptions = tracker.descriptions;
+        names = tracker.trackerMatrix;
+        widget.implement = ImplementationSteps(descriptions: descriptions, totalSteps: descriptions.length);
+        path = tracker.path;
+        _isInit = true;
+        break;
+      }
     }
-    names = data!.trackerMatrix;
+
+    // final data = Provider.of<QuerySnapshot?>(context);
+    //
+    // if(!_isInit) {
+    //   for(var doc in data!.docs) {
+    //     if(doc.get('name') == widget.name) {
+    //       var decodedMatrix = jsonDecode(doc.get('list'));
+    //       names = List<List<String>>.from(decodedMatrix.map((row){
+    //         return List<String>.from(row.map((value) => (value.toString())));
+    //       }));
+    //       for(var item in doc.get('descriptions')) {
+    //         descriptions.add(item.toString());
+    //       }
+    //       widget.implement = ImplementationSteps(descriptions: descriptions, totalSteps: descriptions.length);
+    //       _isInit = true;
+    //       break;
+    //     }
+    //   }
+    // }
+    // if(!_isInit) {
+    //   descriptions = data!.descriptions;
+    //   widget.implement = ImplementationSteps(totalSteps: descriptions.length, descriptions: descriptions,);
+    //   _isInit = true;
+    // }
+    // names = data!.trackerMatrix;
     updateMatrix();
 
 
-    return Container(
-        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-        height: 260 + (descriptions.length * 65),
-        color: Colors.green[50],
-        width: double.infinity,
-        child: ListView(
-            children: [Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  color: Colors.blue[50],
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        color: Colors.red[50],
-                        margin: EdgeInsets.fromLTRB(0,0,0,10),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: trackerMatrix.reversed.map((sublist) => Row(
-                                children: sublist.reversed.map((tracker) => tracker.widget).toList()
-                            )
-                            ).toList()
-                        ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey[900],
+        title: Text("Implementation Tracker", style: TextStyle(color: "#FFA611".toColor())),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<int>(
+            icon: Icon(Icons.settings, color: "#FFA611".toColor()),
+            onSelected: (item) {
+              menuOption(item);
+              setState(() {
+
+              });
+            },
+            position: PopupMenuPosition.under,
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 0,
+                child: Text("Add Tracker"),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Text("Edit Steps"),
+              ),
+              PopupMenuDivider(),
+              PopupMenuItem(
+                value: 2,
+                child: Text("Sign Out"),
+              ),
+            ],
+          )
+        ],
+      ),
+      body: Center(
+        child: Container(
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            height: 260 + (descriptions.length * 65),
+            color: Colors.green[50],
+            width: double.infinity,
+            child: ListView(
+                children: [Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      color: Colors.blue[50],
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            color: Colors.red[50],
+                            margin: EdgeInsets.fromLTRB(0,0,0,10),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: trackerMatrix.reversed.map((sublist) => Row(
+                                    children: sublist.reversed.map((tracker) => tracker.widget).toList()
+                                )
+                                ).toList()
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(10, 50, 0, 10),
+                            child: widget.implement,
+                          )
+                        ],
                       ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(10, 50, 0, 10),
-                        child: widget.implement,
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),]
-        )
+                    ),
+                  ],
+                ),]
+            )
+        ),
+      ),
     );
   }
 }

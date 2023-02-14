@@ -11,7 +11,7 @@ class Database {
   Database({required this.uid});
 
   // collection references
-  final CollectionReference trackerCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
 
   Future<void> setUserData() async {
     List<List<String>> trackerMatrix = [
@@ -23,12 +23,13 @@ class Database {
     ];
     String jsonMatrix = jsonEncode(trackerMatrix);
     var inst = InstancePath(path: "updateUserData error");
-    await trackerCollection.doc(uid).collection("trackers").add({
+    await userCollection.doc(uid).collection("trackers").add({
+      'name': 'tab1',
       'list': jsonMatrix,
       'descriptions': ['node1', 'node2', 'node3', 'node4', 'node5'],
     }).then((value) async {
       // return value.path;
-      await trackerCollection
+      await userCollection
           .doc(uid)
           .collection('trackers')
           .get()
@@ -38,7 +39,17 @@ class Database {
         });
       });
     });
-    await trackerCollection.doc(uid).set({
+    await userCollection.doc(uid).collection("trackers").add({
+      'name': 'tab2',
+      'list': jsonMatrix,
+      'descriptions': ['step1', 'step2', 'step3', 'step4', 'step5'],
+    });
+    await userCollection.doc(uid).collection("trackers").add({
+      'name': 'tab3',
+      'list': jsonMatrix,
+      'descriptions': ['step1', 'step2', 'step3', 'step4', 'step5'],
+    });
+    await userCollection.doc(uid).set({
       'current_instance': inst.path
     });
     // await trackerCollection.doc(uid).get()
@@ -55,10 +66,10 @@ class Database {
     //     });
   }
 
-  Future<void> updateUserData(List<List<String>> trackerMatrix, List<String> descriptions) async {
-    var inst = InstancePath(path: "path");
+  Future<void> updateUserData(String name, List<List<String>> trackerMatrix, List<String> descriptions, String path) async {
     String jsonMatrix = jsonEncode(trackerMatrix);
-    await trackerCollection.doc(uid).collection("trackers").doc(inst.path).set({
+    await userCollection.doc(uid).collection("trackers").doc(path).set({
+      'name': name,
       'list': jsonMatrix,
       'descriptions': descriptions,
     });
@@ -74,30 +85,65 @@ class Database {
       descriptions.add(item.toString());
     }
     return TrackerData(
+        name: doc.get('name') ?? "",
         trackerMatrix: trackerMatrix ?? [[]],
-        descriptions: descriptions ?? []
+        descriptions: descriptions ?? [],
+        path: doc.id
     );
   }
 
-  // get firestore stream
-  // Stream<List<TrackerData>> get data {
-  //   return trackerCollection.snapshots()
-  //       .map(_dataFromSnapshot);
-  // }
+  List<TrackerData?> _listFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      var decodedMatrix = jsonDecode(doc.get('list'));
+      List<String> descriptions = [];
+      List<List<String>> trackerMatrix = List<List<String>>.from(decodedMatrix.map((row){
+        return List<String>.from(row.map((value) => (value.toString())));
+      }));
+      for(var item in doc.get('descriptions')) {
+        descriptions.add(item.toString());
+      }
+      return TrackerData(
+        name: doc.get('name'),
+        descriptions: descriptions,
+        trackerMatrix: trackerMatrix,
+        path: doc.id
+      );
+    }).toList();
+  }
+
+  Stream<List<TrackerData?>> get data {
+    return userCollection.doc(uid).collection('trackers').snapshots()
+        .map(_listFromSnapshot);
+  }
+
+  // get firestore snapshots
+  Stream<QuerySnapshot> get snapshots {
+    return userCollection.doc(uid).collection('trackers').snapshots();
+  }
 
   // get user doc stream
-  Stream<TrackerData?> get userData {
-    var inst = InstancePath(path: "");
-    return trackerCollection.doc(uid).collection('trackers').doc(inst.path).snapshots()
+  Stream<TrackerData?> userData(String path) {
+    return userCollection.doc(uid).collection('trackers').doc(path).snapshots()
         .map(_dataFromSnapshot);
   }
 
   Future<void> setPath() async {
-    await trackerCollection.doc(uid).get()
+    await userCollection.doc(uid).get()
         .then((doc) {
       var inst = InstancePath(path: doc['current_instance']);
       inst.path = doc['current_instance'];
     });
+  }
+
+  Future<List<String>> get names async {
+    List<String> names = [];
+    await userCollection.doc(uid).collection('trackers').get().then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot document) {
+        // Get the document ID
+        names.add(document.get('name'));
+      });
+    });
+    return names;
   }
 
 }

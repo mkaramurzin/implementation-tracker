@@ -7,8 +7,11 @@ import 'package:tracker/pages/loading.dart';
 import 'package:tracker/services/database.dart';
 import 'package:tracker/widgets/trackers/active.dart';
 
+import '../services/auth.dart';
+
 class TrackerForm extends StatefulWidget {
-  const TrackerForm({Key? key}) : super(key: key);
+  String path;
+  TrackerForm({super.key, required this.path});
 
   @override
   State<TrackerForm> createState() => _TrackerFormState();
@@ -19,6 +22,7 @@ class _TrackerFormState extends State<TrackerForm> {
   final _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   Active newTracker = Active(name: '', deleteButton: Container());
+  final AuthService _auth = AuthService();
 
 
   void updateTracker() {
@@ -28,12 +32,10 @@ class _TrackerFormState extends State<TrackerForm> {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User?>(context);
-
     return Container(
       height: MediaQuery.of(context).size.height * 0.25,
       child: StreamBuilder<TrackerData?>(
-        stream: Database(uid: user!.uid).userData,
+        stream: Database(uid: _auth.user!.uid).userData(widget.path),
         builder: (context, snapshot) {
           if(snapshot.hasData) {
 
@@ -77,9 +79,11 @@ class _TrackerFormState extends State<TrackerForm> {
                     onPressed: () async {
                       if(_formKey.currentState!.validate()) {
                         trackerMatrix[0].add(_textController.text);
-                        await Database(uid: user.uid).updateUserData(
+                        await Database(uid: _auth.user!.uid).updateUserData(
+                          data.name,
                           trackerMatrix,
                           data.descriptions,
+                          data.path
                         );
                         Navigator.pop(context);
                       }
