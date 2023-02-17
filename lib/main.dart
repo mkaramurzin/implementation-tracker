@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
                   '/home': (context) => Home(),
                   '/edit': (context) => Edit(),
                   '/message': (context) => Message(),
+                  '/loading': (context) => Loading(),
                 },
               );
             }

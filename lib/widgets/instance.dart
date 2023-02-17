@@ -32,7 +32,6 @@ class _InstanceState extends State<Instance> {
   List<List<String>> names = [];
   List<String> descriptions = [];
   String path = "";
-  bool _isInit = false;
   final AuthService _auth = AuthService();
 
   void updateMatrix() {
@@ -120,8 +119,9 @@ class _InstanceState extends State<Instance> {
         break;
 
       case 1:
-        Navigator.pushReplacementNamed(context, '/edit', arguments: {
-          'widget': this.widget
+        Navigator.pushNamed(context, '/edit', arguments: {
+          'widget': this.widget,
+          'path': path,
         });
         break;
 
@@ -146,40 +146,14 @@ class _InstanceState extends State<Instance> {
     for(var tracker in data) {
       if(tracker!.name == widget.name) {
         descriptions = tracker.descriptions;
+        widget.descriptions = descriptions;
         names = tracker.trackerMatrix;
         widget.implement = ImplementationSteps(descriptions: descriptions, totalSteps: descriptions.length);
         path = tracker.path;
-        _isInit = true;
         break;
       }
     }
-
-    // final data = Provider.of<QuerySnapshot?>(context);
-    //
-    // if(!_isInit) {
-    //   for(var doc in data!.docs) {
-    //     if(doc.get('name') == widget.name) {
-    //       var decodedMatrix = jsonDecode(doc.get('list'));
-    //       names = List<List<String>>.from(decodedMatrix.map((row){
-    //         return List<String>.from(row.map((value) => (value.toString())));
-    //       }));
-    //       for(var item in doc.get('descriptions')) {
-    //         descriptions.add(item.toString());
-    //       }
-    //       widget.implement = ImplementationSteps(descriptions: descriptions, totalSteps: descriptions.length);
-    //       _isInit = true;
-    //       break;
-    //     }
-    //   }
-    // }
-    // if(!_isInit) {
-    //   descriptions = data!.descriptions;
-    //   widget.implement = ImplementationSteps(totalSteps: descriptions.length, descriptions: descriptions,);
-    //   _isInit = true;
-    // }
-    // names = data!.trackerMatrix;
     updateMatrix();
-
 
     return Scaffold(
       appBar: AppBar(

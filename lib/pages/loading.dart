@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/services/database.dart';
-import 'package:tracker/services/instance_path.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -18,7 +17,6 @@ class _LoadingState extends State<Loading> {
   final AuthService _auth = AuthService();
 
   void setup() async {
-    await Database(uid: _auth.user!.uid).setPath();
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       // 'widget': Instance(name: "placeholder", descriptions: ['test', 'tnt', '', 'lol','lolo']), // TODO get rid of this line
       'names': await Database(uid: _auth.user!.uid).names

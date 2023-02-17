@@ -5,7 +5,22 @@ class ImplementationSteps extends StatefulWidget {
   int totalSteps;
   List<String> descriptions;
   bool editing;
-  ImplementationSteps({super.key, this.totalSteps = 1, required this.descriptions, this.editing = false});
+  Function(int index) insertArray;
+  Function(int index) removeArray;
+  Function(int dummy) clearMatrix;
+  ImplementationSteps({
+    super.key,
+    this.totalSteps = 1,
+    required this.descriptions,
+    this.editing = false,
+    this.insertArray = _dummyFunction,
+    this.removeArray = _dummyFunction,
+    this.clearMatrix = _dummyFunction,
+  });
+
+  static void _dummyFunction(int index) {
+    // Do nothing
+  }
 
   @override
   State<ImplementationSteps> createState() => _ImplementationStepsState();
@@ -52,6 +67,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                 onPressed: () {
                   widget.descriptions.clear();
                   widget.totalSteps = 1;
+                  widget.clearMatrix(0);
                   setState(() {
                     buildMap();
                   });
@@ -83,6 +99,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                     GestureDetector(
                       onTap: () {
                         widget.descriptions.insert(entry.key + 1, "New step description");
+                        widget.insertArray(entry.key + 1);
                         buildMap();
                         setState(() {
                           selectedIndex = entry.key + 1;
@@ -129,6 +146,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                       margin: EdgeInsets.only(right: 10),
                       child: ElevatedButton(
                         onPressed: () {
+                          widget.removeArray(widget.descriptions.indexOf(entry.value));
                           widget.descriptions.remove(entry.value);
                           buildMap();
                           setState(() {

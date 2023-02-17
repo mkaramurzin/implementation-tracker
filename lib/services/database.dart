@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/widgets/instance.dart';
-import 'package:tracker/services/instance_path.dart';
 
 class Database {
 
@@ -16,62 +15,42 @@ class Database {
   Future<void> setUserData() async {
     List<List<String>> trackerMatrix = [
       ['T10', 'T20', 'T30'],
-      ['T40', '', ''],
-      ['','',''],
-      ['','',''],
-      ['','',''],
+      ['T40'],
+      [],
+      [],
+      [],
     ];
     String jsonMatrix = jsonEncode(trackerMatrix);
-    var inst = InstancePath(path: "updateUserData error");
+    final Timestamp timestamp = Timestamp.now();
     await userCollection.doc(uid).collection("trackers").add({
       'name': 'tab1',
       'list': jsonMatrix,
       'descriptions': ['node1', 'node2', 'node3', 'node4', 'node5'],
-    }).then((value) async {
-      // return value.path;
-      await userCollection
-          .doc(uid)
-          .collection('trackers')
-          .get()
-          .then((QuerySnapshot snapshot) {
-        snapshot.docs.forEach((doc) {
-          inst.path = doc.id;
-        });
-      });
+      'timestamp': FieldValue.serverTimestamp(),
     });
     await userCollection.doc(uid).collection("trackers").add({
       'name': 'tab2',
       'list': jsonMatrix,
       'descriptions': ['step1', 'step2', 'step3', 'step4', 'step5'],
+      'timestamp': FieldValue.serverTimestamp(),
     });
     await userCollection.doc(uid).collection("trackers").add({
       'name': 'tab3',
       'list': jsonMatrix,
       'descriptions': ['step1', 'step2', 'step3', 'step4', 'step5'],
+      'timestamp': FieldValue.serverTimestamp(),
     });
-    await userCollection.doc(uid).set({
-      'current_instance': inst.path
-    });
-    // await trackerCollection.doc(uid).get()
-    // .then((doc) {
-    //   print(doc['current_instance']);
-    // });
-    // await trackerCollection.doc(uid).collection('trackers').doc(currentInstance).get()
-    // .then((doc) {
-    //   print(doc['list']);
-    // });
-    // await trackerCollection.doc(uid).collection('trackers').doc(currentInstance)
-    //     .snapshots().forEach((element) {
-    //       print(element.get('list'));
-    //     });
   }
 
   Future<void> updateUserData(String name, List<List<String>> trackerMatrix, List<String> descriptions, String path) async {
     String jsonMatrix = jsonEncode(trackerMatrix);
+    DocumentSnapshot snapshot = await userCollection.doc(uid).collection("trackers").doc(path).get();
+    Timestamp timestamp = snapshot.get('timestamp');
     await userCollection.doc(uid).collection("trackers").doc(path).set({
       'name': name,
       'list': jsonMatrix,
       'descriptions': descriptions,
+      'timestamp': timestamp, // set the timestamp field to the retrieved value
     });
   }
 
@@ -127,17 +106,10 @@ class Database {
         .map(_dataFromSnapshot);
   }
 
-  Future<void> setPath() async {
-    await userCollection.doc(uid).get()
-        .then((doc) {
-      var inst = InstancePath(path: doc['current_instance']);
-      inst.path = doc['current_instance'];
-    });
-  }
-
   Future<List<String>> get names async {
     List<String> names = [];
-    await userCollection.doc(uid).collection('trackers').get().then((QuerySnapshot snapshot) {
+    await userCollection.doc(uid).collection('trackers')
+    .orderBy('timestamp', descending: false).get().then((QuerySnapshot snapshot) {
       snapshot.docs.forEach((DocumentSnapshot document) {
         // Get the document ID
         names.add(document.get('name'));

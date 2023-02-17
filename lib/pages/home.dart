@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/auth.dart';
 import 'package:tracker/services/extension.dart';
-import 'package:tracker/services/instance_path.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/services/database.dart';
@@ -31,11 +30,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments as Map;
 
-    // instance = data['widget'];
     tabs = data['names'];
-
-    // tabs.add(instance);
-    var inst = InstancePath(path: 'test home.dart');
 
     return StreamProvider<List<TrackerData?>?>.value(
       value: Database(uid: _auth.user!.uid).data,
