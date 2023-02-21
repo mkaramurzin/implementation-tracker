@@ -13,32 +13,32 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-
   final AuthService _auth = AuthService();
+  late BuildContext _context;
 
   void setup() async {
-    Navigator.pushReplacementNamed(context, '/home', arguments: {
-      // 'widget': Instance(name: "placeholder", descriptions: ['test', 'tnt', '', 'lol','lolo']), // TODO get rid of this line
-      'names': await Database(uid: _auth.user!.uid).names
+    List<String> names = await Database(uid: _auth.user!.uid).names;
+    Navigator.pushReplacementNamed(_context, '/home', arguments: {
+      'names': names
     });
   }
 
   @override
   void initState() {
     super.initState();
-    // setup();
+    _context = context;
+    setup();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[900],
-      body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              setup();
-            }, child: Text("click"),
-          )
+      body: const Center(
+        child: SpinKitSpinningLines(
+          color: Colors.white,
+          size: 50.0,
+        ),
       ),
     );
   }

@@ -127,7 +127,7 @@ class _InstanceState extends State<Instance> {
 
       case 2:
         await _auth.signOut();
-        Navigator.pushReplacementNamed(context, '/message');
+        Navigator.pushReplacementNamed(context, '/');
         break;
     }
   }
@@ -192,7 +192,6 @@ class _InstanceState extends State<Instance> {
         child: Container(
             margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
             height: 260 + (descriptions.length * 65),
-            color: Colors.green[50],
             width: double.infinity,
             child: ListView(
                 children: [Column(
@@ -200,14 +199,12 @@ class _InstanceState extends State<Instance> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      color: Colors.blue[50],
                       margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Container(
-                            color: Colors.red[50],
                             margin: EdgeInsets.fromLTRB(0,0,0,10),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
