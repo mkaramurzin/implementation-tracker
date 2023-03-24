@@ -17,9 +17,9 @@ class _LoadingState extends State<Loading> {
   late BuildContext _context;
 
   void setup() async {
-    List<String> names = await Database(uid: _auth.user!.uid).names;
+    List<String> tabNames = await Database(uid: _auth.user!.uid).tabNames;
     Navigator.pushReplacementNamed(_context, '/home', arguments: {
-      'names': names
+      'tabNames': tabNames
     });
   }
 

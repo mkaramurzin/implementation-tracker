@@ -29,32 +29,32 @@ class _InstanceState extends State<Instance> {
 
   int largestRow = 0;
   List<List<Tracker>> trackerMatrix = [[]];
-  List<List<String>> names = [];
+  List<List<List<String>>> trackers = [];
   List<String> descriptions = [];
   String path = "";
   final AuthService _auth = AuthService();
 
   void updateMatrix() {
     trackerMatrix = [[]];
-    for(int i = 0; i < names.length; i++) {
+    for(int i = 0; i < trackers.length; i++) {
       List<Tracker> row = [];
-      for(int j = 0; j < names[i].length; j++) {
-        if(names[i][j].isNotEmpty) {
+      for(int j = 0; j < trackers[i].length; j++) {
+        if(trackers[i][j].isNotEmpty) {
           row.add(
             Tracker(
-              name: names[i][j],
-              widget: i == names.length-1 ?
+              name: trackers[i][j][0],
+              widget: i == trackers.length-1 ?
               Active(
-                  name: names[i][j],
+                  name: trackers[i][j][0],
                   delete: true,
                   deleteButton: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     child: Icon(Icons.delete),
                     onPressed: () async {
-                      names[i].remove(names[i][j]);
+                      trackers[i].remove(trackers[i][j]);
                       await Database(uid: _auth.user!.uid).updateUserData(
                         widget.name,
-                        names,
+                        trackers,
                         descriptions,
                         path,
                       );
@@ -66,7 +66,7 @@ class _InstanceState extends State<Instance> {
               )
               :
               Active(
-                name: names[i][j],
+                name: trackers[i][j][0],
                 deleteButton: Container(),
               )
             )
@@ -75,17 +75,24 @@ class _InstanceState extends State<Instance> {
       }
       row.add(
           Tracker(name: "", widget: Default(
-              delete: i == names.length-1,
+              delete: i == trackers.length-1,
               onAccept: (data) async {
                 setState(() {
-                  names.forEach((subList) {
-                    subList.removeWhere((name) => name == data);
-                  });
+                  for (var i = trackers.length - 1; i >= 0; i--) {
+                    final row = trackers[i];
+                    for (var j = row.length - 1; j >= 0; j--) {
+                      final subList = row[j];
+                      if (subList[0] == data[0]) {
+                        row.removeAt(j);
+                      }
+                    }
+                  }
+
                 });
-                names[i].add(data);
+                trackers[i].add(data);
                 await Database(uid: _auth.user!.uid).updateUserData(
                   widget.name,
-                  names,
+                  trackers,
                   descriptions,
                   path
                 );
@@ -119,7 +126,7 @@ class _InstanceState extends State<Instance> {
         break;
 
       case 1:
-        Navigator.pushNamed(context, '/edit', arguments: {
+        Navigator.pushReplacementNamed(context, '/edit', arguments: {
           'widget': this.widget,
           'path': path,
         });
@@ -133,13 +140,6 @@ class _InstanceState extends State<Instance> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // await Database(uid: _auth.user!.uid).
-  }
-
-  @override
   Widget build(BuildContext context) {
 
     final data = Provider.of<List<TrackerData?>?>(context) ?? [];
@@ -147,7 +147,7 @@ class _InstanceState extends State<Instance> {
       if(tracker!.name == widget.name) {
         descriptions = tracker.descriptions;
         widget.descriptions = descriptions;
-        names = tracker.trackerMatrix;
+        trackers = tracker.trackerMatrix;
         widget.implement = ImplementationSteps(descriptions: descriptions, totalSteps: descriptions.length);
         path = tracker.path;
         break;

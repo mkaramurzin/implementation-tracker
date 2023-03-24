@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context)!.settings.arguments as Map;
 
-    tabs = data['names'];
+    tabs = data['tabNames'];
 
     return StreamProvider<List<TrackerData?>?>.value(
       value: Database(uid: _auth.user!.uid).data,

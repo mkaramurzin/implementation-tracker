@@ -40,7 +40,7 @@ class _TrackerFormState extends State<TrackerForm> {
           if(snapshot.hasData) {
 
             TrackerData? data = snapshot.data;
-            List<List<String>> trackerMatrix = data!.trackerMatrix;
+            List<List<List<String>>> trackerMatrix = data!.trackerMatrix;
             return Form(
               key: _formKey,
               child: Column(
@@ -78,7 +78,8 @@ class _TrackerFormState extends State<TrackerForm> {
                     child: Text("Add"),
                     onPressed: () async {
                       if(_formKey.currentState!.validate()) {
-                        trackerMatrix[0].add(_textController.text);
+                        List<String> newTracker = [_textController.text, '#000000', '#000000'];
+                        trackerMatrix[0].add(newTracker);
                         await Database(uid: _auth.user!.uid).updateUserData(
                           data.name,
                           trackerMatrix,

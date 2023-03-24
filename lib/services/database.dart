@@ -13,9 +13,9 @@ class Database {
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
 
   Future<void> setUserData() async {
-    List<List<String>> trackerMatrix = [
-      ['T10', 'T20', 'T30'],
-      ['T40'],
+    List<List<List<String>>> trackerMatrix = [
+      [['T10', '#000000', '#000000'], ['T20', '#000000', '#000000'], ['T30', '#000000', '#000000']],
+      [['T40', '#000000', '#000000']],
       [],
       [],
       [],
@@ -42,7 +42,7 @@ class Database {
     });
   }
 
-  Future<void> updateUserData(String name, List<List<String>> trackerMatrix, List<String> descriptions, String path) async {
+  Future<void> updateUserData(String name, List<List<List<String>>> trackerMatrix, List<String> descriptions, String path) async {
     String jsonMatrix = jsonEncode(trackerMatrix);
     DocumentSnapshot snapshot = await userCollection.doc(uid).collection("trackers").doc(path).get();
     Timestamp timestamp = snapshot.get('timestamp');
@@ -54,41 +54,47 @@ class Database {
     });
   }
 
-  TrackerData? _dataFromSnapshot(DocumentSnapshot doc) {
+  TrackerData _dataFromSnapshot(DocumentSnapshot doc) {
     var decodedMatrix = jsonDecode(doc.get('list'));
     List<String> descriptions = [];
-    List<List<String>> trackerMatrix = List<List<String>>.from(decodedMatrix.map((row){
-      return List<String>.from(row.map((value) => (value.toString())));
+    List<List<List<String>>> trackerMatrix = List<List<List<String>>>.from(decodedMatrix.map((table) {
+      return List<List<String>>.from(table.map((row) {
+        return List<String>.from(row.map((value) => (value.toString())));
+      }));
     }));
-    for(var item in doc.get('descriptions')) {
+    for (var item in doc.get('descriptions')) {
       descriptions.add(item.toString());
     }
     return TrackerData(
-        name: doc.get('name') ?? "",
-        trackerMatrix: trackerMatrix ?? [[]],
-        descriptions: descriptions ?? [],
-        path: doc.id
+      name: doc.get('name') ?? "",
+      trackerMatrix: trackerMatrix ?? [[[]]],
+      descriptions: descriptions ?? [],
+      path: doc.id,
     );
   }
+
 
   List<TrackerData?> _listFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       var decodedMatrix = jsonDecode(doc.get('list'));
       List<String> descriptions = [];
-      List<List<String>> trackerMatrix = List<List<String>>.from(decodedMatrix.map((row){
-        return List<String>.from(row.map((value) => (value.toString())));
+      List<List<List<String>>> trackerMatrix = List<List<List<String>>>.from(decodedMatrix.map((table) {
+        return List<List<String>>.from(table.map((row) {
+          return List<String>.from(row.map((value) => (value.toString())));
+        }));
       }));
-      for(var item in doc.get('descriptions')) {
+      for (var item in doc.get('descriptions')) {
         descriptions.add(item.toString());
       }
       return TrackerData(
         name: doc.get('name'),
         descriptions: descriptions,
         trackerMatrix: trackerMatrix,
-        path: doc.id
+        path: doc.id,
       );
     }).toList();
   }
+
 
   Stream<List<TrackerData?>> get data {
     return userCollection.doc(uid).collection('trackers').snapshots()
@@ -106,7 +112,7 @@ class Database {
         .map(_dataFromSnapshot);
   }
 
-  Future<List<String>> get names async {
+  Future<List<String>> get tabNames async {
     List<String> names = [];
     await userCollection.doc(uid).collection('trackers')
     .orderBy('timestamp', descending: false).get().then((QuerySnapshot snapshot) {

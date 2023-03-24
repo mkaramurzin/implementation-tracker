@@ -1,7 +1,7 @@
 class TrackerData {
 
   String name;
-  List<List<String>> trackerMatrix;
+  List<List<List<String>>> trackerMatrix;
   List<String> descriptions;
   String path;
 

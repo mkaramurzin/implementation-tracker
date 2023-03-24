@@ -90,7 +90,6 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
           children: [
             AnimatedContainer(
               duration: Duration(milliseconds: 200),
-              color: Colors.yellow[100],
               height: widget.totalSteps * (widget.editing ? 85 : multiplier),
               width: widget.editing ? 150 : 50,
               child: Column(
