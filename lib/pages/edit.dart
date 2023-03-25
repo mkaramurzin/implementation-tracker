@@ -17,7 +17,7 @@ class Edit extends StatefulWidget {
 class _EditState extends State<Edit> {
   late ImplementationSteps implementation;
   late Instance original;
-  List<List<List<String>>> newMatrix = [];
+  List<List<List<String>>> newMatrix = [[[]]];
   String path = "";
   bool _isInit = false;
   final AuthService _auth = AuthService();
@@ -87,8 +87,9 @@ class _EditState extends State<Edit> {
                                   margin: EdgeInsets.all(10),
                                   child: ElevatedButton(
                                     onPressed: () async {
+                                      List<String> tabNames = await Database(uid: _auth.user!.uid).tabNames;
                                       Navigator.pushReplacementNamed(context, '/home', arguments: {
-                                        'tabNRames': await Database(uid: _auth.user!.uid).tabNames,
+                                        'tabNames': tabNames,
                                       });
                                     },
                                     child: Text("Cancel"),

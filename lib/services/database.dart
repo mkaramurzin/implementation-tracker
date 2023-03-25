@@ -14,7 +14,7 @@ class Database {
 
   Future<void> setUserData() async {
     List<List<List<String>>> trackerMatrix = [
-      [['T10', '#000000', '#000000'], ['T20', '#000000', '#000000'], ['T30', '#000000', '#000000']],
+      [['T10', '#FFA611', '#000000'], ['T20', '#000000', '#000000'], ['T30', '#000000', '#000000']],
       [['T40', '#000000', '#000000']],
       [],
       [],
@@ -25,13 +25,13 @@ class Database {
     await userCollection.doc(uid).collection("trackers").add({
       'name': 'tab1',
       'list': jsonMatrix,
-      'descriptions': ['node1', 'node2', 'node3', 'node4', 'node5'],
+      'descriptions': ['step1', 'step2', 'step3', 'step4', 'step5'],
       'timestamp': FieldValue.serverTimestamp(),
     });
     await userCollection.doc(uid).collection("trackers").add({
       'name': 'tab2',
       'list': jsonMatrix,
-      'descriptions': ['step1', 'step2', 'step3', 'step4', 'step5'],
+      'descriptions': ['node1', 'node2', 'node3', 'node4', 'node5'],
       'timestamp': FieldValue.serverTimestamp(),
     });
     await userCollection.doc(uid).collection("trackers").add({

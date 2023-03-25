@@ -46,6 +46,8 @@ class _InstanceState extends State<Instance> {
               widget: i == trackers.length-1 ?
               Active(
                   name: trackers[i][j][0],
+                  color: trackers[i][j][1],
+                  backgroundColor: trackers[i][j][2],
                   delete: true,
                   deleteButton: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -67,6 +69,8 @@ class _InstanceState extends State<Instance> {
               :
               Active(
                 name: trackers[i][j][0],
+                color: trackers[i][j][1],
+                backgroundColor: trackers[i][j][2],
                 deleteButton: Container(),
               )
             )

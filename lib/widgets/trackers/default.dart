@@ -12,7 +12,6 @@ class Default extends StatelessWidget {
       child: DragTarget<List<String>>(
           builder: (context, accepted, rejected) {
             return Container(
-              color: Colors.green,
               height: 74,
               width: 72,
             );
