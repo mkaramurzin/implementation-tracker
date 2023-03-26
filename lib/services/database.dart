@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracker/models/tracker_data.dart';
-import 'package:tracker/widgets/instance.dart';
+import 'package:tracker/services/themes.dart';
 
 class Database {
 
@@ -22,6 +22,9 @@ class Database {
     ];
     String jsonMatrix = jsonEncode(trackerMatrix);
     final Timestamp timestamp = Timestamp.now();
+    await userCollection.doc(uid).set({
+      'theme': "classic"
+    });
     await userCollection.doc(uid).collection("trackers").add({
       'name': 'tab1',
       'list': jsonMatrix,
@@ -122,6 +125,11 @@ class Database {
       });
     });
     return names;
+  }
+
+  Future<void> changeTheme(String theme) async {
+    await userCollection.doc(uid).update({'theme': theme});
+    ThemeManager().theme = theme;
   }
 
 }

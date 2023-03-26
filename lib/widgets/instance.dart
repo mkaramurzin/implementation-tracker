@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/database.dart';
 import 'package:tracker/services/extension.dart';
+import 'package:tracker/services/themes.dart';
 import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/widgets/implementation_steps.dart';
 import 'package:tracker/widgets/tracker_form.dart';
@@ -16,7 +17,6 @@ import '../services/auth.dart';
 
 class Instance extends StatefulWidget {
   String name;
-  late Widget implement;
   List<String> descriptions = [];
   int rowMax;
   Instance({required this.name, super.key, this.rowMax = 8});
@@ -31,6 +31,7 @@ class _InstanceState extends State<Instance> {
   List<List<Tracker>> trackerMatrix = [[]];
   List<List<List<String>>> trackers = [];
   List<String> descriptions = [];
+  Widget implement = Container();
   String path = "";
   final AuthService _auth = AuthService();
 
@@ -152,7 +153,7 @@ class _InstanceState extends State<Instance> {
         descriptions = tracker.descriptions;
         widget.descriptions = descriptions;
         trackers = tracker.trackerMatrix;
-        widget.implement = ImplementationSteps(descriptions: descriptions, totalSteps: descriptions.length);
+        implement = ImplementationSteps(descriptions: descriptions, totalSteps: descriptions.length);
         path = tracker.path;
         break;
       }
@@ -161,12 +162,11 @@ class _InstanceState extends State<Instance> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[900],
-        title: Text("Implementation Tracker", style: TextStyle(color: "#FFA611".toColor())),
+        title: Text("Implementation Tracker", style: TextStyle(color: ThemeManager().currentTheme.primaryColor)),
         centerTitle: true,
         actions: [
           PopupMenuButton<int>(
-            icon: Icon(Icons.settings, color: "#FFA611".toColor()),
+            icon: Icon(Icons.settings, color: ThemeManager().currentTheme.primaryColor),
             onSelected: (item) {
               menuOption(item);
               setState(() {
@@ -220,7 +220,7 @@ class _InstanceState extends State<Instance> {
                           ),
                           Container(
                             margin: EdgeInsets.fromLTRB(10, 50, 0, 10),
-                            child: widget.implement,
+                            child: implement,
                           )
                         ],
                       ),

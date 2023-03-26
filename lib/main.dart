@@ -7,6 +7,7 @@ import 'package:tracker/pages/home.dart';
 import 'package:tracker/pages/loading.dart';
 import 'package:tracker/pages/message.dart';
 import 'package:tracker/services/auth.dart';
+import 'package:tracker/services/themes.dart';
 import 'package:tracker/wrapper.dart';
 
 void main() async {
@@ -33,10 +34,6 @@ class MyApp extends StatelessWidget {
       value: AuthService().authStateChanges,
       initialData: null,
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
         home: FutureBuilder(
           future: _initialization,
           builder: (context, snapshot) {
@@ -45,6 +42,7 @@ class MyApp extends StatelessWidget {
             } else {
               print('connected');
               return MaterialApp(
+                theme: ThemeManager().currentTheme,
                 initialRoute: '/',
                 routes: {
                   '/': (context) => Wrapper(),

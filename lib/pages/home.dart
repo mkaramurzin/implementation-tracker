@@ -1,15 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/auth.dart';
-import 'package:tracker/services/extension.dart';
 import 'package:tracker/widgets/instance.dart';
-import 'package:tracker/widgets/tracker.dart';
 import 'package:tracker/services/database.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tracker/widgets/trackers/active.dart';
-import 'package:tracker/widgets/tracker_form.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

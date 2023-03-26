@@ -59,7 +59,6 @@ class _EditState extends State<Edit> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[900],
         title: Text("Edit Steps", style: TextStyle(color: "#FFA611".toColor())),
         centerTitle: true,
       ),

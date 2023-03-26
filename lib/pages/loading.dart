@@ -17,11 +17,17 @@ class _LoadingState extends State<Loading> {
   late BuildContext _context;
 
   void setup() async {
+    await Future.delayed(Duration(seconds: 1));
     List<String> tabNames = await Database(uid: _auth.user!.uid).tabNames;
-    Navigator.pushReplacementNamed(_context, '/home', arguments: {
-      'tabNames': tabNames
+
+    // Wait for the tab names to be fully loaded before navigating to the home page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacementNamed(_context, '/home', arguments: {
+        'tabNames': tabNames
+      });
     });
   }
+
 
   @override
   void initState() {
