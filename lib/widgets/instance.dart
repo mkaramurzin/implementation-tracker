@@ -51,7 +51,7 @@ class _InstanceState extends State<Instance> {
                   backgroundColor: trackers[i][j][2],
                   delete: true,
                   deleteButton: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style: ElevatedButton.styleFrom(backgroundColor: ThemeManager().deleteButton),
                     child: Icon(Icons.delete),
                     onPressed: () async {
                       trackers[i].remove(trackers[i][j]);
@@ -161,12 +161,17 @@ class _InstanceState extends State<Instance> {
     updateMatrix();
 
     return Scaffold(
+      backgroundColor: ThemeManager().scaffoldColor,
       appBar: AppBar(
-        title: Text("Implementation Tracker", style: TextStyle(color: ThemeManager().currentTheme.primaryColor)),
+        elevation: 5,
+        shadowColor: ThemeManager().buttonAccent,
+        backgroundColor: ThemeManager().appBarColor,
+        title: Text("Implementation Tracker", style: TextStyle(color: ThemeManager().primaryColor)),
         centerTitle: true,
         actions: [
           PopupMenuButton<int>(
-            icon: Icon(Icons.settings, color: ThemeManager().currentTheme.primaryColor),
+            color: ThemeManager().popupPrimary,
+            icon: Icon(Icons.settings, color: ThemeManager().primaryColor),
             onSelected: (item) {
               menuOption(item);
               setState(() {
@@ -177,16 +182,57 @@ class _InstanceState extends State<Instance> {
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 0,
-                child: Text("Add Tracker"),
+                child: Text("Add Tracker", style: TextStyle(color: ThemeManager().text)),
               ),
               PopupMenuItem(
                 value: 1,
-                child: Text("Edit Steps"),
+                child: Text("Edit Steps", style: TextStyle(color: ThemeManager().text)),
+              ),
+              PopupMenuItem(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        ThemeManager().theme = "classic";
+                        setState(() {
+
+                        });
+                        await Database(uid: _auth.user!.uid).changeTheme("classic");
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          color: "#FFA611".toColor()
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        ThemeManager().theme = "kenneth";
+                        setState(() {
+
+                        });
+                        await Database(uid: _auth.user!.uid).changeTheme("kenneth");
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          color: Colors.deepPurple[900],
+                        ),
+                      ),
+                    )
+                  ],
+                )
               ),
               PopupMenuDivider(),
               PopupMenuItem(
                 value: 2,
-                child: Text("Sign Out"),
+                child: Text("Sign Out", style: TextStyle(color: ThemeManager().text)),
               ),
             ],
           )

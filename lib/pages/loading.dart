@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/services/database.dart';
+import 'package:tracker/services/themes.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -18,6 +19,7 @@ class _LoadingState extends State<Loading> {
 
   void setup() async {
     await Future.delayed(Duration(seconds: 1));
+    ThemeManager().theme = await Database(uid: _auth.user!.uid).theme;
     List<String> tabNames = await Database(uid: _auth.user!.uid).tabNames;
 
     // Wait for the tab names to be fully loaded before navigating to the home page

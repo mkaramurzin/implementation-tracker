@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/extension.dart';
+import 'package:tracker/services/themes.dart';
 import 'package:tracker/widgets/implementation_steps.dart';
 import 'package:tracker/widgets/instance.dart';
 
@@ -58,8 +59,12 @@ class _EditState extends State<Edit> {
     }
 
     return Scaffold(
+      backgroundColor: ThemeManager().scaffoldColor,
       appBar: AppBar(
-        title: Text("Edit Steps", style: TextStyle(color: "#FFA611".toColor())),
+        elevation: 5,
+        shadowColor: ThemeManager().buttonAccent,
+        backgroundColor: ThemeManager().appBarColor,
+        title: Text("Edit Steps", style: TextStyle(color: ThemeManager().primaryColor)),
         centerTitle: true,
       ),
       body: StreamBuilder<TrackerData?>(
@@ -85,6 +90,9 @@ class _EditState extends State<Edit> {
                                 Container(
                                   margin: EdgeInsets.all(10),
                                   child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: ThemeManager().buttonPrimary,
+                                    ),
                                     onPressed: () async {
                                       List<String> tabNames = await Database(uid: _auth.user!.uid).tabNames;
                                       Navigator.pushReplacementNamed(context, '/home', arguments: {
@@ -97,6 +105,9 @@ class _EditState extends State<Edit> {
                                 Container(
                                   margin: EdgeInsets.all(10),
                                   child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: ThemeManager().buttonPrimary,
+                                    ),
                                     onPressed: () async {
                                       await Database(uid: _auth.user!.uid).updateUserData(
                                           data!.name,

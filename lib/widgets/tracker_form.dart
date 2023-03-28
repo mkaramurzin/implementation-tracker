@@ -3,6 +3,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/pages/loading.dart';
 import 'package:tracker/services/database.dart';
+import 'package:tracker/services/themes.dart';
 import 'package:tracker/widgets/trackers/active.dart';
 import '../services/auth.dart';
 
@@ -36,6 +37,7 @@ class _TrackerFormState extends State<TrackerForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: ThemeManager().popupPrimary,
           title: const Text('Pick a color'),
           content: SingleChildScrollView(
             child: ColorPicker(
@@ -56,7 +58,7 @@ class _TrackerFormState extends State<TrackerForm> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('OK'),
+              child: Text('OK', style: TextStyle(color: ThemeManager().text)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -72,6 +74,7 @@ class _TrackerFormState extends State<TrackerForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: ThemeManager().popupPrimary,
           title: const Text('Pick a background color'),
           content: SingleChildScrollView(
             child: ColorPicker(
@@ -92,7 +95,7 @@ class _TrackerFormState extends State<TrackerForm> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('OK'),
+              child: Text('OK', style: TextStyle(color: ThemeManager().text)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -106,6 +109,7 @@ class _TrackerFormState extends State<TrackerForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: ThemeManager().scaffoldColor,
       height: MediaQuery
           .of(context)
           .size
@@ -127,6 +131,8 @@ class _TrackerFormState extends State<TrackerForm> {
                           .size
                           .width * 0.25,
                       child: TextFormField(
+                        style: TextStyle(color: ThemeManager().text),
+                        cursorColor: ThemeManager().stepSecondary,
                         onChanged: (text) {
                           setState(() {
                             updateTracker();
@@ -135,7 +141,16 @@ class _TrackerFormState extends State<TrackerForm> {
                         controller: _textController,
                         autofocus: true,
                         decoration:
-                        InputDecoration(labelText: 'Tracker Name'),
+                        InputDecoration(
+                          labelText: 'Tracker Name',
+                          labelStyle: TextStyle(color: ThemeManager().text),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: ThemeManager().buttonAccent!)
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: ThemeManager().buttonPrimary!)
+                          )
+                        ),
                         validator: (text) {
                           if (_textController.text.isEmpty) {
                             return "Please name the tracker";
@@ -151,7 +166,7 @@ class _TrackerFormState extends State<TrackerForm> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text('Select Colors'),
+                    Text('Select Colors', style: TextStyle(color: ThemeManager().text)),
                     SizedBox(height: 7),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -172,7 +187,7 @@ class _TrackerFormState extends State<TrackerForm> {
                                 ),
                               ),
                             ),
-                            Text('Inner')
+                            Text('Inner', style: TextStyle(color: ThemeManager().text))
                           ],
                         ),
                         SizedBox(width: 10),
@@ -191,7 +206,7 @@ class _TrackerFormState extends State<TrackerForm> {
                                 ),
                               ),
                             ),
-                            Text('Outer')
+                            Text('Outer', style: TextStyle(color: ThemeManager().text))
                           ],
                         ),
                       ],
@@ -200,7 +215,11 @@ class _TrackerFormState extends State<TrackerForm> {
                     newTracker,
                     SizedBox(height: 20),
                     ElevatedButton(
-                      child: Text("Add"),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: ThemeManager().buttonSecondary,
+                        backgroundColor: ThemeManager().buttonPrimary,
+                      ),
+                      child: Text("Add", style: TextStyle(color: ThemeManager().text)),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           List<String> newTracker = [

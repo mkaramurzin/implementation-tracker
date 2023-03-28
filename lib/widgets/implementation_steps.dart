@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/services/extension.dart';
+import 'package:tracker/services/themes.dart';
 
 class ImplementationSteps extends StatefulWidget {
   int totalSteps;
@@ -76,8 +77,8 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                   _controller.text = description;
                   _controller.notifyListeners();
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: Text('Clear'),
+                style: ElevatedButton.styleFrom(backgroundColor: ThemeManager().primaryColor),
+                child: Text('Clear', style: TextStyle(color: ThemeManager().buttonSecondary)),
               ),
             ],
           ),
@@ -116,16 +117,16 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                           height: 30,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(5)),
-                            color: Colors.white,
+                            color: ThemeManager().buttonSecondary,
                             border: Border.all(
-                              color: Colors.blue,
+                              color: ThemeManager().buttonPrimary!,
                               width: 2.0,
                             ),
                           ),
                           child: Center(
-                            child: const Icon(
+                            child: Icon(
                               Icons.add,
-                              color: Colors.blue,
+                              color: ThemeManager().buttonPrimary,
                             ),
                           ),
                         ),
@@ -144,6 +145,9 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                     Container(
                       margin: EdgeInsets.only(right: 10),
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeManager().buttonPrimary,
+                        ),
                         onPressed: () {
                           widget.removeArray(widget.descriptions.indexOf(entry.value));
                           widget.descriptions.remove(entry.value);
@@ -183,7 +187,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                         width: 45,
                         decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
-                            color: selectedIndex == entry.key ? Colors.blueGrey[800] : "#F5820D".toColor(),
+                            color: selectedIndex == entry.key ? ThemeManager().stepPrimary : ThemeManager().stepSecondary,
                             borderRadius: BorderRadius.all(Radius.circular(10))
                         ),
                       ),
@@ -197,14 +201,14 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                 height: 200,
                 width: 300,
                 decoration: BoxDecoration(
-                    color: description == "" ? Colors.grey[50] : Colors.white,
+                    color: description == "" ? ThemeManager().scaffoldColor : ThemeManager().buttonSecondary, // TODO description box
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     boxShadow: description == "" ?
                     []
                         :
                     [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
+                        color: ThemeManager().stepPrimary!.withOpacity(0.4),
                         spreadRadius: 5,
                         blurRadius: 7,
                         offset: Offset(0, 3), // changes position of shadow
@@ -215,7 +219,7 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                 child: !widget.editing ?
                 ListView(
                   children: [
-                    Text(description)
+                    Text(description, style: TextStyle(color: ThemeManager().text))
                   ],
                 )
                     :
@@ -226,6 +230,8 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                       SizedBox(
                         height: 150,
                         child: TextFormField(
+                          cursorColor: ThemeManager().stepSecondary,
+                          style: TextStyle(color: ThemeManager().text),
                           controller: _controller,
                           maxLines: 10,
                           readOnly: description == "",
@@ -239,6 +245,9 @@ class _ImplementationStepsState extends State<ImplementationSteps> {
                         ),
                       ),
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeManager().buttonPrimary,
+                        ),
                         onPressed: () {
                           widget.descriptions[selectedIndex] = _controller.text;
                           buildMap();

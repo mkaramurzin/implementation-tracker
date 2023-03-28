@@ -10,48 +10,118 @@ class ThemeManager {
 
   ThemeManager._internal();
 
-  final Map<String, ThemeData> _themes = {
-    'classic': ThemeData(
-      primarySwatch: Colors.orange,
-      backgroundColor: Colors.orange,
-    ),
-    'kenneth': ThemeData(
-      brightness: Brightness.dark,
-      primarySwatch: Colors.deepPurple,
-    ),
-  };
+  String _currentTheme = "classic";
 
-  ThemeData _currentTheme = ThemeData(
-    // primarySwatch: MaterialColor(
-    //   0xFF172D3B,
-    //   <int, Color>{
-    //     50: Color(0xFFE4E9EC),
-    //     100: Color(0xFFBDC7CE),
-    //     200: Color(0xFF91A2B2),
-    //     300: Color(0xFF647B96),
-    //     400: Color(0xFF425C7E),
-    //     500: Color(0xFF172D3B),
-    //     600: Color(0xFF152936),
-    //     700: Color(0xFF12252F),
-    //     800: Color(0xFF0F1E28),
-    //     900: Color(0xFF09141A),
-    //   },
-    // ),
-    appBarTheme: AppBarTheme(
-      color: '#172D3B'.toColor(),
-    ),
-    scaffoldBackgroundColor: Colors.grey[50],
-    primaryColor: "#FFA611".toColor(),
+  Color? get scaffoldColor {
+    if(_currentTheme == "kenneth") {
+      return "#1A0136".toColor();
+    } else {
+      return Colors.grey[50];
+    }
+  }
 
-  );
+  Color get primaryColor {
+    if(_currentTheme == "kenneth") {
+      return Color(0xFF00FFFF);
+    } else {
+      return "#FFA611".toColor();
+    }
+  }
 
-  ThemeData get currentTheme => _currentTheme;
+  Color get secondaryColor {
+    if(_currentTheme == "kenneth") {
+      return "#3C0949".toColor();
+    } else {
+      return "#F5820D".toColor();
+    }
+  }
 
-  Map<String, ThemeData> get themes => _themes;
+  Color get appBarColor {
+    if(_currentTheme == "kenneth") {
+      return Colors.black;
+    } else {
+      return "#172D3B".toColor();
+    }
+  }
+
+  // Button theme
+  Color get buttonSecondary {
+    if(_currentTheme == "kenneth") {
+      return Colors.black;
+    } else {
+      return Colors.white;
+    }
+  }
+
+  Color? get buttonPrimary {
+    if(_currentTheme == "kenneth") {
+      return Colors.deepPurple[400];
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color? get deleteButton {
+    if(_currentTheme == "kenneth") {
+      return Colors.deepPurple[400];
+    } else {
+      return Colors.red;
+    }
+  }
+
+  Color? get buttonAccent {
+    if(_currentTheme == "kenneth") {
+      return "#F432FF".toColor();
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  // Step icon theme
+  Color? get stepPrimary {
+    if(_currentTheme == "kenneth") {
+      return Colors.deepPurple[400];
+    } else {
+      return Colors.blueGrey[800];
+    }
+  }
+
+  Color get stepSecondary {
+    if(_currentTheme == "kenneth") {
+      return "#F432FF".toColor();
+    } else {
+      return "#F5820D".toColor();
+    }
+  }
+
+  Color? get stepSegment {
+    if(_currentTheme == "kenneth") {
+      return Colors.deepPurple[400];
+    } else {
+      return Colors.black;
+    }
+  }
+
+  // Popup theme
+  Color? get popupPrimary {
+    if(_currentTheme == "kenneth") {
+      return Colors.deepPurple[400];
+    } else {
+      return Colors.white;
+    }
+  }
+
+  Color get text {
+    if(_currentTheme == "kenneth") {
+      return Colors.white;
+    } else {
+      return Colors.black;
+    }
+  }
+
+  String get currentTheme => _currentTheme;
 
   set theme(String value) {
-    if (_themes.containsKey(value)) {
-      _currentTheme = _themes[value]!;
-    }
+    _currentTheme = value;
   }
 }

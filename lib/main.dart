@@ -42,7 +42,6 @@ class MyApp extends StatelessWidget {
             } else {
               print('connected');
               return MaterialApp(
-                theme: ThemeManager().currentTheme,
                 initialRoute: '/',
                 routes: {
                   '/': (context) => Wrapper(),

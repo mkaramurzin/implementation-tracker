@@ -19,8 +19,10 @@ class _ResetPasswordState extends State<ResetPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
+        backgroundColor: Colors.blueGrey[900],
         title: Text(
           'Reset Password',
           style: TextStyle(color: "#FFA611".toColor()),

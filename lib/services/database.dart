@@ -132,4 +132,9 @@ class Database {
     ThemeManager().theme = theme;
   }
 
+  Future<String> get theme async {
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    return snapshot.get('theme');
+  }
+
 }

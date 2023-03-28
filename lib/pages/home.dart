@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/tracker_data.dart';
 import 'package:tracker/services/auth.dart';
+import 'package:tracker/services/themes.dart';
 import 'package:tracker/widgets/instance.dart';
 import 'package:tracker/services/database.dart';
 import 'package:provider/provider.dart';
@@ -36,8 +37,9 @@ class _HomeState extends State<Home> {
             children: tabs.map((name) => Instance(name: name)).toList(),
           ),
           bottomNavigationBar: Material(
-            color: Colors.blueGrey[900],
+            color: ThemeManager().appBarColor,
             child: TabBar(
+              indicatorColor: ThemeManager().buttonAccent,
               isScrollable: true,
               tabs: tabs.map((title) {
                 return Tab(text: title);
