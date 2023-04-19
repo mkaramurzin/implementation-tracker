@@ -50,6 +50,8 @@ class _InstanceState extends State<Instance> {
                   color: trackers[i][j][1],
                   backgroundColor: trackers[i][j][2],
                   delete: true,
+                  usePopup: trackers[i][j][3] == 'Note' ? true : false,
+                  content: trackers[i][j][4],
                   deleteButton: ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: ThemeManager().deleteButton),
                     child: Icon(Icons.delete),
@@ -73,6 +75,8 @@ class _InstanceState extends State<Instance> {
                 color: trackers[i][j][1],
                 backgroundColor: trackers[i][j][2],
                 deleteButton: Container(),
+                usePopup: trackers[i][j][3] == 'Note' ? true : false,
+                content: trackers[i][j][4],
               )
             )
           );

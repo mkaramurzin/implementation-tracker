@@ -8,8 +8,8 @@ class Active extends StatelessWidget {
   bool delete;
   String color;
   String backgroundColor;
-  String content = '';
-  bool usePopup = false;
+  String content;
+  bool usePopup;
 
   Active({
     super.key,
@@ -18,6 +18,8 @@ class Active extends StatelessWidget {
     this.delete = false,
     this.color = "#000000",
     this.backgroundColor = "#000000",
+    this.content = "",
+    this.usePopup = false
   });
 
   @override
@@ -28,7 +30,7 @@ class Active extends StatelessWidget {
         Container(
           margin: EdgeInsets.fromLTRB(7, 5, 10, (delete ? 17 : 10)),
           child: Draggable<List<String>>(
-            data: [name, color, backgroundColor],
+            data: [name, color, backgroundColor, usePopup ? "Note" : "Link", content],
             feedback: CircleAvatar(
               backgroundColor: Colors.red,
               radius: 25,

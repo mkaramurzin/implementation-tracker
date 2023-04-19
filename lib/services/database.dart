@@ -15,12 +15,12 @@ class Database {
   Future<void> setUserData() async {
     List<List<List<String>>> trackerMatrix = [
       [
-        ['T10', '#000000', '#FFA611', '1', 'popup text'],
-        ['T20', '#000000', '#000000', '0', 'https://google.com'],
-        ['T30', '#000000', '#000000', '0', '']
+        ['T10', '#000000', '#FFA611', 'Note', 'popup text'],
+        ['T20', '#000000', '#000000', 'Link', 'https://google.com'],
+        ['T30', '#000000', '#000000', 'Link', '']
       ],
       [
-        ['T40', '#000000', '#000000', '0', '']
+        ['T40', '#000000', '#000000', 'Link', '']
       ],
       [],
       [],
@@ -28,10 +28,10 @@ class Database {
     ];
     String jsonMatrix = jsonEncode(trackerMatrix);
     final Timestamp timestamp = Timestamp.now();
-    await userCollection.doc(uid).set({'theme': "classic"});
     await userCollection.doc(uid).set({
       'preset_colors': ['#000000', '#FFA611']
     });
+    await userCollection.doc(uid).set({'theme': "classic"});
     await userCollection.doc(uid).collection("trackers").add({
       'name': 'tab1',
       'list': jsonMatrix,

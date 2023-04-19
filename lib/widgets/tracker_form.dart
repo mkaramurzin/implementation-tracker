@@ -19,7 +19,7 @@ class TrackerForm extends StatefulWidget {
 class _TrackerFormState extends State<TrackerForm> {
   final _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  Active newTracker = Active(name: '', deleteButton: Container());
+  Active newTracker = Active(name: '', deleteButton: Container(), usePopup: false);
   String _selectedColor = '#000000';
   String _selectedBackgroundColor = '#000000';
   final AuthService _auth = AuthService();
@@ -56,6 +56,8 @@ class _TrackerFormState extends State<TrackerForm> {
         name: _textController.text,
         deleteButton: Container(),
         color: _selectedColor,
+        usePopup: _selectedOption == "Link" ? false : true,
+        content: _controller.text,
         backgroundColor: _selectedBackgroundColor);
   }
 
@@ -309,7 +311,9 @@ class _TrackerFormState extends State<TrackerForm> {
                           List<String> newTracker = [
                             _textController.text,
                             _selectedColor,
-                            _selectedBackgroundColor
+                            _selectedBackgroundColor,
+                            _selectedOption,
+                            _controller.text
                           ];
                           trackerMatrix[0].add(newTracker);
                           await Database(uid: _auth.user!.uid).updateUserData(
